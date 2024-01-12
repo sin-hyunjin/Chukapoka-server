@@ -1,4 +1,6 @@
-package com.chukapoka.server.domain;
+package com.chukapoka.server.treemember.domain;
+
+
 
 public class Memo {
     public int id;
