@@ -45,15 +45,20 @@ public class TreeUserService {
      */
     public TreeUserResponseDto authenticateUser(TreeUserRequestDto userRequestDTO) {
         String email = userRequestDTO.getEmail();
-
         String password = userRequestDTO.getPassword();
         String type = userRequestDTO.getType(); // login || join
 
         if ("login".equals(type)){
             // 등록된 이메일과 비밀번호 일치 여부
-
-            //unique_userid_1234는 식별자용 아이디임 토큰처리 해야함
-            return new TreeUserResponseDto(TreeUserEnumType.ResultType.Success, email, "unique_userid_1234");
+            // security & JWT 처리 없이 로그인 체크
+            TreeUser user = treeUserRepository.findByEmail(email);
+            if (user != null && user.getPassword().equals(password)) {
+                //unique_userid_1234는 식별자용 아이디임 토큰처리 해야함
+                return new TreeUserResponseDto(TreeUserEnumType.ResultType.Success, email, "unique_userid_1234");
+            } else {
+                // 이메일 또는 비밀번호가 않았을시
+                return new TreeUserResponseDto(TreeUserEnumType.ResultType.Fail, email, null);
+            }
 
         }else {
             // 회원가입 로그인 처리

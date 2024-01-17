@@ -1,14 +1,12 @@
 package com.chukapoka.server.treemember.domain;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Data
 @Table(name = "tb_user")
 public class TreeUser {
 
@@ -40,6 +38,7 @@ public class TreeUser {
         this.emailType = emailType;
         this.updatedAt = LocalDateTime.now();
     }
+
 
 
 }
