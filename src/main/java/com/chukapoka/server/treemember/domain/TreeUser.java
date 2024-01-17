@@ -25,7 +25,7 @@ public class TreeUser {
     private String email;
 
     @Column(nullable = false)
-    private String emailType;
+    private TreeUserEnumType.EmailType emailType;
 
     @Column(nullable = false)
     private String password;
@@ -34,12 +34,12 @@ public class TreeUser {
     private LocalDateTime updatedAt;
 
     @Builder
-    public TreeUser(String email, String password, String emailType) {
+    public TreeUser(String email, String password, TreeUserEnumType.EmailType  emailType) {
         this.email = email;
         this.password = password;
         this.emailType = emailType;
         this.updatedAt = LocalDateTime.now();
     }
 
-    // 추가적인 메소드, Getter, Setter 등 필요한 부분을 작성할 수 있습니다.
+
 }

@@ -12,9 +12,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class TreeUserService {
+    private final TreeUserRepository treeUserRepository;
 
     @Autowired
-    private TreeUserRepository treeUserRepository;
+    public TreeUserService(TreeUserRepository treeUserRepository) {
+        this.treeUserRepository = treeUserRepository;
+    }
+
 
     /** 이메일 체크 서비스
      * - 이메일이 등록되어 있는지 확인
@@ -41,12 +45,12 @@ public class TreeUserService {
      */
     public TreeUserResponseDto authenticateUser(TreeUserRequestDto userRequestDTO) {
         String email = userRequestDTO.getEmail();
+
         String password = userRequestDTO.getPassword();
         String type = userRequestDTO.getType(); // login || join
 
         if ("login".equals(type)){
             // 등록된 이메일과 비밀번호 일치 여부
-
 
             //unique_userid_1234는 식별자용 아이디임 토큰처리 해야함
             return new TreeUserResponseDto(TreeUserEnumType.ResultType.Success, email, "unique_userid_1234");
@@ -54,6 +58,15 @@ public class TreeUserService {
         }else {
             // 회원가입 로그인 처리
             if ("join".equals(type)) {
+                // 사용자 등록
+                TreeUser newUser = TreeUser.builder()
+                        .email(email)
+                        .password(password)  // 실제로는 데이터베이스에 저장하기 전에 비밀번호를 해싱 처리해야함
+                        .emailType(TreeUserEnumType.EmailType.Default) // 이메일 선택안하면 기본적으로 Default값으로 설정
+                        .build();
+
+                treeUserRepository.save(newUser);
+
                 return new TreeUserResponseDto(TreeUserEnumType.ResultType.Success, email, "unique_userid_1234");
 
             }
