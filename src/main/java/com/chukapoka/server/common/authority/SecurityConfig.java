@@ -22,15 +22,14 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorizeRequests) ->
                         authorizeRequests
-                                .requestMatchers("/api/user/**").authenticated() // 토큰 없이 접근 가능하다는 뜻
-                                .anyRequest().authenticated()
-                )
-                .formLogin((formLogin) ->
-                        formLogin.loginPage("/login")
-                )
-                .logout((logoutConfig) ->
-                        logoutConfig.logoutSuccessUrl("/")
-                );
+//                                .requestMatchers("/api/user/**").authenticated() // 토큰 없이 접근 가능하다는 뜻
+                                .anyRequest().permitAll());
+//                .formLogin((formLogin) ->
+//                        formLogin.loginPage("/login")
+//                )
+//                .logout((logoutConfig) ->
+//                        logoutConfig.logoutSuccessUrl("/")
+//                );
 
 
 

@@ -1,4 +1,4 @@
-package com.chukapoka.server.treemember.domain;
+package com.chukapoka.server.user.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @Table(name = "tb_user")
-public class TreeUser {
+public class User {
 
     /**
      * Security Test를 위한 사용자 도메인
@@ -19,20 +19,20 @@ public class TreeUser {
     @Column(name = "user_id")
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = true, unique = true)
     private String email;
 
-    @Column(nullable = false)
-    private TreeUserEnumType.EmailType emailType;
+    @Column(nullable = true)
+    private String emailType;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String password;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalDateTime updatedAt;
 
     @Builder
-    public TreeUser(String email, String password, TreeUserEnumType.EmailType  emailType) {
+    public User(String email, String password, String emailType) {
         this.email = email;
         this.password = password;
         this.emailType = emailType;

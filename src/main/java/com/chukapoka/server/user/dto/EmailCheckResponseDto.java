@@ -1,6 +1,5 @@
-package com.chukapoka.server.treemember.dto;
+package com.chukapoka.server.user.dto;
 
-import com.chukapoka.server.treemember.domain.TreeUserEnumType;
 import lombok.Data;
 
 
