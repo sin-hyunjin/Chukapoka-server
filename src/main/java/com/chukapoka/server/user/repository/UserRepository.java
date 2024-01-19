@@ -1,6 +1,7 @@
 package com.chukapoka.server.user.repository;
 
 
+import com.chukapoka.server.common.enums.EmailType;
 import com.chukapoka.server.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

@@ -1,4 +1,4 @@
-package com.chukapoka.server.common.status;
+package com.chukapoka.server.common.enums;
 
 public enum Authority {
     /**

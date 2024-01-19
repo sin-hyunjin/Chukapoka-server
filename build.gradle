@@ -30,11 +30,14 @@ dependencies {
 	implementation 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
+	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation
+	implementation("org.springframework.boot:spring-boot-starter-validation")
+
 	// PostgreSQL JDBC 드라이버 의존성
 	runtimeOnly 'org.postgresql:postgresql'
 
 	// Jakarta Validation API 의존성
-	implementation("jakarta.validation:jakarta.validation-api:3.0.0") // 최신 버전 사용 권장
+//	implementation("jakarta.validation:jakarta.validation-api") // 최신 버전 사용 권장
 
 	// Spring Security 사용 시 필요한 의존성
 	implementation("org.springframework.boot:spring-boot-starter-security")

@@ -19,10 +19,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests((authorizeRequests) ->
-                        authorizeRequests
-                                .anyRequest().permitAll());
+                .authorizeHttpRequests((authorizeRequests) -> {
+                    authorizeRequests
+                            .requestMatchers("/api/user/emailcheck", "/api/user").anonymous();
+                });
 
         return http.build();
     }

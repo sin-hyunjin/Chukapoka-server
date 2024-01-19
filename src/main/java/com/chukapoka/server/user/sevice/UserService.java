@@ -2,6 +2,7 @@ package com.chukapoka.server.user.sevice;
 
 
 
+import com.chukapoka.server.common.enums.EmailType;
 import com.chukapoka.server.user.dto.*;
 import com.chukapoka.server.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,6 @@ public class UserService {
     public EmailCheckResponseDto checkEmail(EmailCheckRequestDto emailCheckRequestDto) {
         String email = emailCheckRequestDto.getEmail();
         String emailType = emailCheckRequestDto.getEmailType();
-
         // 이메일이 이미 등록되어 있는지 확인
         if (userRepository.existsByEmailAndEmailType(email, emailType)) {
             // 이메일이 등록되어 있으면 {login, email} 값 반환
@@ -29,6 +29,4 @@ public class UserService {
             return new EmailCheckResponseDto("join", email);
         }
     }
-
-
 }
