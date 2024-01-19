@@ -1,4 +1,4 @@
-package com.chukapoka.server.common.Enum;
+package com.chukapoka.server.common.enums;
 
 public enum EmailType {
 
