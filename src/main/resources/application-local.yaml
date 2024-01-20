@@ -9,9 +9,9 @@ server:
 
 spring:
   datasource:
-    url: ${AWS_RDS_URL}
-    username: ${AWS_RDS_USERNAME}
-    password: ${AWS_RDS_PASSWORD}
+    url: jdbc:postgresql://localhost:5432/tree
+    username: tree
+    password: 1234
   jpa:
     database: POSTGRESQL
     open-in-view: true
@@ -33,4 +33,4 @@ logging:
 
 # JWT Secret ??
 jwt:
-  secret: ${AUTH_JWT_SECRET}
+  secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LXR1dG9yaWFsLWppd29vbi1zcHJpbmctYm9vdC1zZWN1cml0eS1qd3QtdHV0b3JpYWwK
