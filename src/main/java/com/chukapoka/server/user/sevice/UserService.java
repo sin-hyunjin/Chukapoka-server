@@ -6,12 +6,15 @@ import com.chukapoka.server.common.enums.EmailType;
 import com.chukapoka.server.user.dto.*;
 import com.chukapoka.server.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     /** 이메일 체크 서비스
      * - 이메일이 등록되어 있는지 확인
