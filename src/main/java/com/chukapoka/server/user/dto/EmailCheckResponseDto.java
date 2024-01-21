@@ -4,6 +4,7 @@ import lombok.Data;
 
 
 @Data
+
 public class EmailCheckResponseDto {
 
     // 로그인 또는 회원가입으로 넘어감
