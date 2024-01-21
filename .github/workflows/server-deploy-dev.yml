@@ -1,8 +1,8 @@
 on:
   push:
     branches:
-      - dev  # push되면 실행될 브랜치를 선택합니다.
-      # - feat/joinByEmail-8  # push되면 실행될 브랜치를 선택합니다.
+      # - dev  # push되면 실행될 브랜치를 선택합니다.
+      - feat/joinByEmail-8  # push되면 실행될 브랜치를 선택합니다.
   workflow_dispatch: # 수동 실행
 
 jobs:
