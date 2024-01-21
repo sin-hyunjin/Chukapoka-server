@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "tb_user")
 public class User {
 
@@ -38,7 +40,6 @@ public class User {
         this.emailType = emailType;
         this.updatedAt = LocalDateTime.now();
     }
-
 
 
 }

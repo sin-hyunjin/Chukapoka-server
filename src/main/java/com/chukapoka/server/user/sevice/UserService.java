@@ -49,7 +49,8 @@ public class UserService {
 
         // 로그인
         if ("login".equals(type)) {
-            if (authenticate(email, password)) {
+            User user = authenticate(email, password);
+            if (user != null) {
                 return new UserResponseDto(ResultType.SUCCESS, email, "unique_userid_1234");
             } else {
                 return new UserResponseDto(ResultType.ERROR, email, null);
@@ -67,15 +68,15 @@ public class UserService {
     }
 
     // 데이터베이스에서 이메일과 비밀번호를 확인하는 로직
-    private boolean authenticate(String email, String password) {
+    private User authenticate(String email, String password) {
         User user = userRepository.findByEmail(email);
 
-        if (user != null) {
-            // 저장된 비밀번호 해시와 입력된 비밀번호를 비교
-            return passwordEncoder.matches(password, user.getPassword());
+        // 저장된 비밀번호 해시와 입력된 비밀번호를 비교
+        if (user != null && passwordEncoder.matches(password, user.getPassword())) {
+            return user;
         }
         // 사용자가 존재하지 않음
-        return false;
+        return null;
     }
     // 회원가입 로직
     public boolean signIn(String email, String password) {
