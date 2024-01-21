@@ -1,8 +1,10 @@
 package com.chukapoka.server.user.dto;
 
+import com.chukapoka.server.common.annotation.ValidEnum;
+import com.chukapoka.server.common.enums.NextActionType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,7 +21,8 @@ public class UserRequestDto {
     @NotBlank(message = "password is null")
     private String password;
 
-    @Pattern(regexp = "join|login", message = "Invalid type. Allowed values: join, login")
-    private String type; // join || login
+    @NotBlank(message = "nextAction is null")
+    @ValidEnum(enumClass = NextActionType.class, message = "Type must be LOGIN or JOIN")
+    private String type; // LOGIN || JOIN
 
 }

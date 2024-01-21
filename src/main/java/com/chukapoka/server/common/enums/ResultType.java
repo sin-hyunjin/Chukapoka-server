@@ -9,7 +9,7 @@ public enum ResultType {
     SUCCESS("정상 처리 되었습니다."),
     ERROR("에러가 발생했습니다.");
 
-    private String msg;
+    private final String msg;
     private static final Map<String, ResultType> lookup = new HashMap<>();
 
     static {

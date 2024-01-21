@@ -25,7 +25,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorizeRequests) -> {
                     authorizeRequests
-                            .requestMatchers("/api/user/emailcheck", "/api/user").anonymous();
+                            .requestMatchers("/api/user/emailcheck", "/api/user/**").anonymous();
                 });
 
         return http.build();

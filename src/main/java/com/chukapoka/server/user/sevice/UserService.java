@@ -3,6 +3,7 @@ package com.chukapoka.server.user.sevice;
 
 
 import com.chukapoka.server.common.enums.EmailType;
+import com.chukapoka.server.common.enums.NextActionType;
 import com.chukapoka.server.common.enums.ResultType;
 import com.chukapoka.server.user.dto.*;
 import com.chukapoka.server.user.entity.User;
@@ -11,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -30,10 +30,10 @@ public class UserService {
         // 이메일이 이미 등록되어 있는지 확인
         if (userRepository.existsByEmailAndEmailType(email, emailType)) {
             // 이메일이 등록되어 있으면 {login, email} 값 반환
-            return new EmailCheckResponseDto("login", email);
+            return new EmailCheckResponseDto(NextActionType.LOGIN.getValue(), email);
         } else {
             // 등록되어 있지않다면 회원가입 {join, email} 값 반환
-            return new EmailCheckResponseDto("join", email);
+            return new EmailCheckResponseDto(NextActionType.JOIN.getValue(), email);
         }
     }
 
@@ -45,21 +45,22 @@ public class UserService {
     public UserResponseDto authenticateUser(UserRequestDto userRequestDto) {
         String email = userRequestDto.getEmail();
         String password = userRequestDto.getPassword();
-        String type = userRequestDto.getType(); // login || join
+        String type = userRequestDto.getType(); // LOGIN || JOIN
 
         // 로그인
-        if ("login".equals(type)) {
+        if (NextActionType.LOGIN.getValue().equals(type)) {
             User user = authenticate(email, password);
             if (user != null) {
-                return new UserResponseDto(ResultType.SUCCESS, email, "unique_userid_1234");
+                return new UserResponseDto(ResultType.SUCCESS, email, user.getId());
             } else {
                 return new UserResponseDto(ResultType.ERROR, email, null);
             }
         }
         // 회원가입
-        if ("join".equals(type)) {
-            if(signIn(email, password)){
-                return new UserResponseDto(ResultType.SUCCESS, email, "unique_userid_1234");
+        if (NextActionType.JOIN.getValue().equals(type)) {
+            Long newId = signIn(email, password);
+            if(newId != null && newId != -1L){
+                return new UserResponseDto(ResultType.SUCCESS, email, newId);
             }else {
                 return new UserResponseDto(ResultType.ERROR, email, null);
             }
@@ -79,28 +80,24 @@ public class UserService {
         return null;
     }
     // 회원가입 로직
-    public boolean signIn(String email, String password) {
-        // 이미 등록된 이메일이 있는지 확인
-        if (userRepository.existsByEmail(email)) {
-            // 이미 등록된 이메일이 있으면 회원가입 실패
-            return false;
-        }
-        // BCryptPasswordEncoder를 사용하여 비밀번호를 해시화하여 저장
-        String hashedPassword = passwordEncoder.encode(password);
-        System.out.println("hashedPassword = " + hashedPassword);
-        // 새로운 사용자 생성
-        User newUser = User.builder()
-                .email(email)
-                .password(hashedPassword)
-                .emailType(EmailType.DEFAULT.name())
-                .build();
-
+    public Long signIn(String email, String password) {
         try {
-            userRepository.save(newUser);
-            return true;
+            // BCryptPasswordEncoder를 사용하여 비밀번호를 해시화하여 저장
+            String hashedPassword = passwordEncoder.encode(password);
+            // 새로운 사용자 생성
+            User newUser = User.builder()
+                    .email(email)
+                    .password(hashedPassword)
+                    .emailType(EmailType.DEFAULT.name())
+                    .build();
+
+            User user= userRepository.save(newUser);
+            System.out.println("user = " + user);
+            return user.getId();
         } catch (Exception e) {
+            
             e.printStackTrace();
-            return false;
+            return -1L;
         }
     }
 }

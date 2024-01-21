@@ -9,11 +9,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserResponseDto {
 
-    private ResultType result; // SUCCESS || FAIL
+    private ResultType result; // SUCCESS || ERROR
     private String email; // "xxxx@xxx.xxx"
-    private String id; // unique_userid
+    private Long id; // unique_userid
 
-    public UserResponseDto(ResultType result, String email, String id) {
+    public UserResponseDto(ResultType result, String email, Long id) {
         this.result = result;
         this.email = email;
         this.id = id;

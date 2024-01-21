@@ -10,9 +10,9 @@ import com.chukapoka.server.user.dto.UserRequestDto;
 import com.chukapoka.server.user.dto.UserResponseDto;
 import com.chukapoka.server.user.sevice.UserService;
 import jakarta.validation.Valid;
-import jakarta.validation.executable.ValidateOnExecution;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
+
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -35,7 +35,6 @@ public class UserController {
         UserResponseDto responseDTO = userService.authenticateUser(userRequestDTO);
         return new BaseResponse<>(ResultType.SUCCESS, responseDTO);
     }
-
 
 }
 
