@@ -15,4 +15,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findByEmail(String email);
     // 이메일이 등록되어있는지 이메일과 이메일타입 확인
     boolean existsByEmailAndEmailType(String email, String emailType);
+
 }
