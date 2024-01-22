@@ -36,5 +36,10 @@ public class UserController {
         return new BaseResponse<>(ResultType.SUCCESS, responseDTO);
     }
 
+    @GetMapping("/test")
+    public BaseResponse<String> test() {
+        return new BaseResponse<>(ResultType.SUCCESS, "test");
+    }
+
 }
 
