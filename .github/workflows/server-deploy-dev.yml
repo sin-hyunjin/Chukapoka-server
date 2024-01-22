@@ -47,8 +47,8 @@ jobs:
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ID }}
-          application_name: chukapoka-back-test
-          environment_name: Chukapoka-back-test-env
+          application_name: chukapoka-server-dev
+          environment_name: Chukapoka-server-dev-env 
           version_label: github-action-${{steps.current-time.outputs.formattedTime}}
           region: ap-northeast-1  # 도쿄, 2: 서울
           deployment_package: server-deploy/server-deploy.zip
