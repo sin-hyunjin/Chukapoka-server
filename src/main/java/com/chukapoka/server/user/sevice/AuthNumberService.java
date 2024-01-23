@@ -1,90 +1,82 @@
 package com.chukapoka.server.user.sevice;
 
+import com.chukapoka.server.common.enums.ResultType;
+import com.chukapoka.server.user.dto.AuthNumberResponseDto;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDateTime;
 import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
 public class AuthNumberService {
 
-
     private final JavaMailSender javaMailSender;
-    private String authNum; // 인증 번호
-
+    private static final String SENDER_EMAIL = "blackduvet52@gmail.com";
+    private static final String EMAIL_SUBJECT = "인증번호 테스트";
 
     // 인증번호 6자리 무작위 생성
-    public void createCode() {
+    public String createCode() {
         Random random = new Random();
-        StringBuffer key = new StringBuffer();
+        StringBuilder key = new StringBuilder();
 
-        for(int i=0; i<6; i++) {
-            int idx = random.nextInt(3);
-
-            switch (idx) {
-                case 0 :
-                    key.append((char) ((int)random.nextInt(26) + 97));
-                    break;
-                case 1:
-                    key.append((char) ((int)random.nextInt(26) + 65));
-                    break;
-                case 2:
-                    key.append(random.nextInt(9));
-                    break;
-            }
+        for (int i = 0; i < 6; i++) {
+            int idx = random.nextInt(10); // 0 ~ 9 숫자 생성
+            key.append(idx);
         }
-        authNum = key.toString();
+
+        return key.toString();
     }
 
     // 메일 양식 작성
-    public MimeMessage createEmailForm(String email) throws MessagingException, UnsupportedEncodingException {
-        createCode();
-        String setForm = "blackduvet52@gmail.com"; // Chukapoka email로 해야함
-        String toEmail = email; // 받는 사람
-        String title = "인증번호 테스트"; // 제목
-
+    public MimeMessage createEmailForm(String email, String authNum) throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = javaMailSender.createMimeMessage();
-        message.addRecipients(MimeMessage.RecipientType.TO, toEmail);
-        message.setSubject(title);
-
-        // 메일 내용
-        String msgOfEmail="";
-        msgOfEmail += "<div style='margin:20px;'>";
-        msgOfEmail += "<h1> Chukapoka 회원 코드 입니다. </h1>";
-        msgOfEmail += "<br>";
-        msgOfEmail += "<p>아래 코드를 입력해주세요<p>";
-        msgOfEmail += "<br>";
-        msgOfEmail += "<p>감사합니다.<p>";
-        msgOfEmail += "<br>";
-        msgOfEmail += "<div align='center' style='border:1px solid black; font-family:verdana';>";
-        msgOfEmail += "<h3 style='color:blue;'>회원가입 인증 코드입니다.</h3>";
-        msgOfEmail += "<div style='font-size:130%'>";
-        msgOfEmail += "CODE : <strong>";
-        msgOfEmail += authNum + "</strong><div><br/> ";
-        msgOfEmail += "</div>";
-
-        message.setFrom(setForm);
+        // 수신자 설정
+        message.addRecipients(MimeMessage.RecipientType.TO, email);
+        // 발신자 이메일 설정
+        message.setFrom(SENDER_EMAIL);
+        message.setSubject(EMAIL_SUBJECT);
+        String msgOfEmail = buildEmailContent(authNum);
         message.setText(msgOfEmail, "utf-8", "html");
 
         return message;
     }
 
-    //실제 메일 전송
-    public String sendEmail(String email) throws MessagingException, UnsupportedEncodingException {
+    // 실제 메일 전송
+    public AuthNumberResponseDto sendEmail(String email) throws MessagingException, UnsupportedEncodingException {
+        String authNum = createCode();
+        AuthNumberResponseDto responseDto = new AuthNumberResponseDto(
+                ResultType.SUCCESS,
+                email,
+                authNum,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusMinutes(5)
+        );
 
-        //메일전송에 필요한 정보 설정
-        MimeMessage emailForm = createEmailForm(email);
-        //실제 메일 전송
+        // 메일전송에 필요한 정보 설정
+        MimeMessage emailForm = createEmailForm(email, authNum);
+        // 실제 메일 전송
         javaMailSender.send(emailForm);
 
-        return authNum; //인증 코드 반환
+        return responseDto; // 인증 코드 반환
     }
 
-
+    // 이메일 폼
+    private String buildEmailContent(String authNum) {
+        return "<div style='margin:20px;'>"
+                + "<h1> Chukapoka 회원 코드 입니다.</h1><br>"
+                + "<p>아래 코드를 입력해주세요<p><br>"
+                + "<div align='center' style='border:1px solid black; font-family:verdana';>"
+                + "<h3 style='color:blue;'>회원가입 인증 코드입니다.</h3>"
+                + "<div style='font-size:130%'>"
+                + "CODE : <strong>"
+                + authNum
+                + "</strong><div><br/> "
+                + "</div>";
+    }
 }

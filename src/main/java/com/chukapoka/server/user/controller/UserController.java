@@ -41,18 +41,9 @@ public class UserController {
 
     // 인증번호 요청 API
     @GetMapping("/authNumber")
-    public BaseResponse<AuthNumberResponseDto> authNumber(
-            @RequestParam("email") String email) {
-        try {
-            // 인증번호를 요청하고 결과를 받음
-            String authNumber = authNumberService.sendEmail(email);
-
-            // 성공적으로 인증번호를 보냈을 경우
-            return new BaseResponse<>(ResultType.SUCCESS, new AuthNumberResponseDto(ResultType.SUCCESS, email));
-        } catch (MessagingException | UnsupportedEncodingException e) {
-            // 실패 시 에러 응답
-            return new BaseResponse<>(ResultType.ERROR, null);
-        }
+    public BaseResponse<AuthNumberResponseDto> authNumber(@RequestParam("email") String email) throws MessagingException, UnsupportedEncodingException {
+            AuthNumberResponseDto responseDto = authNumberService.sendEmail(email);
+            return new BaseResponse<>(ResultType.SUCCESS, responseDto);
     }
 }
 
