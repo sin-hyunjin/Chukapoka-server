@@ -14,8 +14,11 @@ public class WebConfig implements WebMvcConfigurer {
     
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
-                .allowedOrigins("http://localhost:8080", _env.getProperty("DOMAIN_URL_HTTP"), _env.getProperty("DOMAIN_URL_HTTPS"), _env.getProperty("AWS_DOMAIN_URL_HTTP"), _env.getProperty("AWS_DOMAIN_URL_HTTPS"))
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
+                .allowedOrigins("http://localhost:8080"
+                , _env.getProperty("DOMAIN_URL_HTTPS")
+                )
+                .allowedMethods("GET"
+                , "POST", "PUT", "DELETE", "OPTIONS");
     }
 }
 
