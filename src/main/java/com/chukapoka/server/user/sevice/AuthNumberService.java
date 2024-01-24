@@ -5,6 +5,7 @@ import com.chukapoka.server.user.dto.AuthNumberResponseDto;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +18,10 @@ import java.util.Random;
 public class AuthNumberService {
 
     private final JavaMailSender javaMailSender;
-    private static final String SENDER_EMAIL = "blackduvet52@gmail.com";
-    private static final String EMAIL_SUBJECT = "인증번호 테스트";
+    private static final String EMAIL_SUBJECT = "Chukapoka 회원가입 인증번호 확인 부탁드립니다.";
+
+    @Value("${spring.mail.username}")
+    String SENDER_EMAIL;
 
     // 인증번호 6자리 무작위 생성
     public String createCode() {
@@ -50,12 +53,15 @@ public class AuthNumberService {
     // 실제 메일 전송
     public AuthNumberResponseDto sendEmail(String email) throws MessagingException, UnsupportedEncodingException {
         String authNum = createCode();
+        LocalDateTime createdAt = LocalDateTime.now();
+        LocalDateTime expiredAt = createdAt.plusMinutes(5); // 유효시간은 5분
+
         AuthNumberResponseDto responseDto = new AuthNumberResponseDto(
                 ResultType.SUCCESS,
                 email,
                 authNum,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusMinutes(5)
+                createdAt,
+                expiredAt
         );
 
         // 메일전송에 필요한 정보 설정
@@ -69,10 +75,10 @@ public class AuthNumberService {
     // 이메일 폼
     private String buildEmailContent(String authNum) {
         return "<div style='margin:20px;'>"
-                + "<h1> Chukapoka 회원 코드 입니다.</h1><br>"
-                + "<p>아래 코드를 입력해주세요<p><br>"
+                + "<h1> Chukapoka 이메일 인증번호 입니다.</h1><br>"
+                + "<p>아래 인증번호를 입력해주세요<p><br>"
                 + "<div align='center' style='border:1px solid black; font-family:verdana';>"
-                + "<h3 style='color:blue;'>회원가입 인증 코드입니다.</h3>"
+                + "<h3 style='color:blue;'>회원가입 이메일 인증번호입니다.</h3>"
                 + "<div style='font-size:130%'>"
                 + "CODE : <strong>"
                 + authNum
