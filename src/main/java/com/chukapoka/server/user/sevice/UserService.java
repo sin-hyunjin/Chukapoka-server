@@ -5,16 +5,22 @@ package com.chukapoka.server.user.sevice;
 import com.chukapoka.server.common.authority.JwtTokenProvider;
 import com.chukapoka.server.common.dto.CustomUser;
 import com.chukapoka.server.common.dto.TokenDto;
+import com.chukapoka.server.common.dto.TokenRequestDto;
+import com.chukapoka.server.common.entity.RefreshToken;
 import com.chukapoka.server.common.enums.Authority;
 import com.chukapoka.server.common.enums.EmailType;
 import com.chukapoka.server.common.enums.NextActionType;
 import com.chukapoka.server.common.enums.ResultType;
+import com.chukapoka.server.common.exception.InvalidInputException;
+import com.chukapoka.server.common.repository.RefreshTokenRepository;
 import com.chukapoka.server.user.dto.*;
 import com.chukapoka.server.user.entity.User;
 import com.chukapoka.server.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,11 +32,13 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
+    @Autowired
+    private final UserRepository userRepository;
+    @Autowired
+    private final PasswordEncoder passwordEncoder;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     /** 이메일 체크 서비스
      * - 이메일이 등록되어 있는지 확인
@@ -121,5 +129,37 @@ public class UserService {
             e.printStackTrace();
             return -1L;
         }
+    }
+
+    /** 토큰 만료시 재발급
+     *
+     */
+    @Transactional
+    public TokenDto reissue(TokenRequestDto tokenRequestDto) {
+
+        // 1. Refresh Token 검증
+        if (!jwtTokenProvider.validateToken(tokenRequestDto.getRefreshToken())) {
+            throw new RuntimeException("Refresh Token 이 유효하지 않습니다.");
+        }
+        // 2. Access Token 에서 user ID 가져오기
+        Authentication authentication = jwtTokenProvider.getAuthentication(tokenRequestDto.getAccessToken());
+
+        // 3. 저장소에서 user ID 를 기반으로 Refresh Token 값 가져옴
+        RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("로그아웃 된 사용자입니다."));
+
+        // 4. Refresh Token 일치하는지 검사
+        if (!refreshToken.getValue().equals(tokenRequestDto.getRefreshToken())) {
+            throw new RuntimeException("토큰의 유저 정보가 일치하지 않습니다.");
+        }
+        // 5. 새로운 토큰 생성
+        TokenDto tokenDto =  jwtTokenProvider.createToken(authentication);
+
+        // 6. 저장소 정보 업데이트
+        RefreshToken newRefreshToken = refreshToken.updateValue(tokenDto.getRefreshToken());
+        refreshTokenRepository.save(newRefreshToken);
+
+        // 토큰 발급
+        return tokenDto;
     }
 }

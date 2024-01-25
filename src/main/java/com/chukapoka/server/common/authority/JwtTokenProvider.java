@@ -26,7 +26,12 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class JwtTokenProvider {
-
+    private static final String AUTHORITIES_KEY = "auth";
+    private static final String BEARER_TYPE = "Bearer";
+    // Access Token 만료 시간 상수 (30분)
+    private static final long ACCESS_EXPIRATION_MILLISECONDS = 1000 * 60 * 30;
+    // Refresh Token 만료 시간 상수 (7일)
+    private static final long REFRESH_EXPIRATION_MILLISECONDS = 1000L * 60 * 60 * 24 * 7;
     private final Key key;
     // 비밀 키를 Base64 디코딩한 값으로 초기화
     @Autowired
@@ -34,11 +39,6 @@ public class JwtTokenProvider {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
-
-    // Access Token 만료 시간 상수 (12시간)
-    private static final long ACCESS_EXPIRATION_MILLISECONDS = 1000 * 60 * 60 * 12;
-    // Refresh Token 만료 시간 상수 (30일)
-    private static final long REFRESH_EXPIRATION_MILLISECONDS = 1000L * 60 * 60 * 24 * 30;
 
     /**
      * 사용자 인증 정보를 기반으로 JWT 토큰을 생성하는 메서드
@@ -53,16 +53,17 @@ public class JwtTokenProvider {
                 .collect(Collectors.joining(","));
 
         Date now = new Date();
-        Date accessExpiration = new Date(now.getTime() + ACCESS_EXPIRATION_MILLISECONDS);
+        Date accessTokenExpiresIn = new Date(now.getTime() + ACCESS_EXPIRATION_MILLISECONDS);
         Date refreshExpiration = new Date(now.getTime() + REFRESH_EXPIRATION_MILLISECONDS);
+
         // Access Token 생성
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
-                .claim("auth", authorities)
+                .claim(AUTHORITIES_KEY, authorities) // 권한
                 .claim("userId", ((CustomUser) authentication.getPrincipal()).getUserId())
                 .setIssuedAt(now)
-                .setExpiration(accessExpiration)
-                .signWith(key, SignatureAlgorithm.HS256)
+                .setExpiration(accessTokenExpiresIn) // 토큰이 만료될시간
+                .signWith(key, SignatureAlgorithm.HS256)  // 비밀키, 암호화 알고리즘이름
                 .compact();
 
         // Refresh Token 생성
@@ -73,7 +74,12 @@ public class JwtTokenProvider {
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
-        return new TokenDto("Bearer", accessToken, refreshToken);
+        return TokenDto.builder()
+                .grantType(BEARER_TYPE)
+                .accessToken(accessToken)
+                .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
+                .refreshToken(refreshToken)
+                .build();
     }
     /**
      * JWT 토큰에서 사용자 정보를 추출하여 인증 객체를 반환하는 메서드
@@ -82,10 +88,10 @@ public class JwtTokenProvider {
     public Authentication getAuthentication(String token) {
         Claims claims = parseClaims(token);
 
-        String auth = claims.get("auth", String.class);
-        String userId = claims.get("userId", String.class);
+        String auth = claims.get(AUTHORITIES_KEY, String.class);
+        Long userId = claims.get("userId", Long.class);
 
-        if (userId == null || userId.isEmpty()) {
+        if (userId == null ||  userId <= 0) {
             throw new RuntimeException("Invalid or empty 'userId' claim in JWT token");
         }
 
@@ -97,7 +103,7 @@ public class JwtTokenProvider {
                 .collect(Collectors.toList());
 
         // UserDetails 객체 생성
-        UserDetails principal = new CustomUser(Long.parseLong(userId), claims.getSubject(), "", authorities);
+        UserDetails principal = new CustomUser(userId, claims.getSubject(), "", authorities);
 
         // UsernamePasswordAuthenticationToken을 사용하여 Authentication 객체 반환
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
@@ -129,4 +135,6 @@ public class JwtTokenProvider {
             return e.getClaims();
         }
     }
+
+
 }

@@ -3,6 +3,7 @@ package com.chukapoka.server.user.dto;
 import com.chukapoka.server.common.dto.TokenDto;
 import com.chukapoka.server.common.enums.ResultType;
 
+import com.chukapoka.server.user.entity.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -23,13 +24,13 @@ public class UserResponseDto {
         this.id = id;
     }
 
-
     public UserResponseDto(ResultType result, String email, Long id, Authentication authentication, TokenDto jwtToken) {
         this.result = result;
         this.email = email;
         this.id = id;
         this.jwtToken = jwtToken;
     }
+
 
 
 }

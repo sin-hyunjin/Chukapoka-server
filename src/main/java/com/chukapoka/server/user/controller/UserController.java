@@ -3,6 +3,7 @@ package com.chukapoka.server.user.controller;
 
 import com.chukapoka.server.common.dto.BaseResponse;
 import com.chukapoka.server.common.dto.TokenDto;
+import com.chukapoka.server.common.dto.TokenRequestDto;
 import com.chukapoka.server.common.enums.ResultType;
 
 import com.chukapoka.server.user.dto.*;
@@ -46,5 +47,13 @@ public class UserController {
             AuthNumberResponseDto responseDto = authNumberService.sendEmail(email);
             return new BaseResponse<>(ResultType.SUCCESS, responseDto);
     }
+
+    // 토큰 만료시 재발급
+    @PostMapping("/reissue")
+    public BaseResponse<TokenDto> reissue(@Valid @RequestBody TokenRequestDto tokenRequestDto) {
+        TokenDto tokenDto = userService.reissue(tokenRequestDto);
+        return new BaseResponse<>(ResultType.SUCCESS, tokenDto);
+    }
+
 }
 

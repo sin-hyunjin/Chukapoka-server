@@ -24,6 +24,5 @@ public class BaseResponse<T> {
         this.message = message;
     }
 
-    public BaseResponse(ResultType resultType, UserResponseDto responseDto, TokenDto jwtToken) {
-    }
+
 }
