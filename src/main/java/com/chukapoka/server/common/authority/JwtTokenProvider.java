@@ -137,4 +137,13 @@ public class JwtTokenProvider {
     }
 
 
+    public Long getExpirationTime(String token) {
+        Claims claims = parseClaims(token);
+        return claims.getExpiration().getTime();
+    }
+    public boolean isTokenExpired(String token) {
+        Claims claims = parseClaims(token);
+        Date expirationDate = claims.getExpiration();
+        return expirationDate != null && expirationDate.before(new Date());
+    }
 }

@@ -51,7 +51,7 @@ public class UserController {
     // 토큰 만료시 재발급
     @PostMapping("/reissue")
     public BaseResponse<TokenDto> reissue(@Valid @RequestBody TokenRequestDto tokenRequestDto) {
-        TokenDto tokenDto = userService.reissue(tokenRequestDto);
+        TokenDto tokenDto = userService.reissueToken(tokenRequestDto);
         return new BaseResponse<>(ResultType.SUCCESS, tokenDto);
     }
 

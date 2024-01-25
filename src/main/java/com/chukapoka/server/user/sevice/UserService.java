@@ -81,6 +81,12 @@ public class UserService {
                 // JWT 토큰 생성
                 TokenDto jwtToken = jwtTokenProvider.createToken(authentication);
 
+                RefreshToken refreshToken = RefreshToken.builder()
+                        .key(authentication.getName())
+                        .value(jwtToken.getRefreshToken())
+                        .build();
+                refreshTokenRepository.save(refreshToken);
+
                 return new UserResponseDto(ResultType.SUCCESS, email, user.getId(), authentication, jwtToken);
             } else {
                 return new UserResponseDto(ResultType.ERROR, email, null);
@@ -132,15 +138,17 @@ public class UserService {
     }
 
     /** 토큰 만료시 재발급
-     *
+     * Access Token을 복호화하여 유저 정보 (USER ID)를 가져오고 저장소에 있는 Refresh Token과 클라이언트가 전달한 Refresh Token의 일치 여부를 검사한다.
+     * 만약 일치한다면 로그인했을 때와 동일하게 새로운 토큰을 생성해서 클라이언트에게 전달한다.
+     * Refresh Token 은 재사용하지 못하게 저장소에서 값을 갱신해준다.
      */
     @Transactional
-    public TokenDto reissue(TokenRequestDto tokenRequestDto) {
-
+    public TokenDto reissueToken(TokenRequestDto tokenRequestDto) {
         // 1. Refresh Token 검증
         if (!jwtTokenProvider.validateToken(tokenRequestDto.getRefreshToken())) {
             throw new RuntimeException("Refresh Token 이 유효하지 않습니다.");
         }
+
         // 2. Access Token 에서 user ID 가져오기
         Authentication authentication = jwtTokenProvider.getAuthentication(tokenRequestDto.getAccessToken());
 
@@ -152,14 +160,27 @@ public class UserService {
         if (!refreshToken.getValue().equals(tokenRequestDto.getRefreshToken())) {
             throw new RuntimeException("토큰의 유저 정보가 일치하지 않습니다.");
         }
-        // 5. 새로운 토큰 생성
-        TokenDto tokenDto =  jwtTokenProvider.createToken(authentication);
 
-        // 6. 저장소 정보 업데이트
-        RefreshToken newRefreshToken = refreshToken.updateValue(tokenDto.getRefreshToken());
-        refreshTokenRepository.save(newRefreshToken);
+        // 5. Access Token이 만료되었다면 새로운 토큰 생성 및 저장소 정보 업데이트
+        if (jwtTokenProvider.validateToken(tokenRequestDto.getAccessToken())) {
+            TokenDto newTokenDto = jwtTokenProvider.createToken(authentication);
 
-        // 토큰 발급
-        return tokenDto;
+            RefreshToken newRefreshToken = RefreshToken.builder()
+                    .key(authentication.getName())
+                    .value(newTokenDto.getRefreshToken())
+                    .build();
+
+            refreshTokenRepository.save(newRefreshToken);
+
+            return newTokenDto;
+        }
+
+        // 6. Access Token이 유효하면 기존 토큰 반환
+        return TokenDto.builder()
+                .grantType("Bearer")
+                .accessToken(tokenRequestDto.getAccessToken())
+                .refreshToken(tokenRequestDto.getRefreshToken())
+                .accessTokenExpiresIn(jwtTokenProvider.getExpirationTime(tokenRequestDto.getAccessToken()))
+                .build();
     }
 }
