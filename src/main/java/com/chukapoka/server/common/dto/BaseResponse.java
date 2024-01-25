@@ -2,6 +2,7 @@ package com.chukapoka.server.common.dto;
 
 
 import com.chukapoka.server.common.enums.ResultType;
+import com.chukapoka.server.user.dto.UserResponseDto;
 import lombok.Data;
 
 @Data
@@ -21,5 +22,8 @@ public class BaseResponse<T> {
         this.resultCode = resultCode.name();
         this.data = data;
         this.message = message;
+    }
+
+    public BaseResponse(ResultType resultType, UserResponseDto responseDto, TokenDto jwtToken) {
     }
 }

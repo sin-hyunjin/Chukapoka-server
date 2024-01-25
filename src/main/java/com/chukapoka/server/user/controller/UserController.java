@@ -2,6 +2,7 @@ package com.chukapoka.server.user.controller;
 
 
 import com.chukapoka.server.common.dto.BaseResponse;
+import com.chukapoka.server.common.dto.TokenDto;
 import com.chukapoka.server.common.enums.ResultType;
 
 import com.chukapoka.server.user.dto.*;
@@ -35,8 +36,8 @@ public class UserController {
     // 로그인 또는 회원가입 처리
     @PostMapping("")
     public BaseResponse<UserResponseDto> authenticateUser(@Valid @RequestBody UserRequestDto userRequestDTO) {
-        UserResponseDto responseDTO = userService.authenticateUser(userRequestDTO);
-        return new BaseResponse<>(ResultType.SUCCESS, responseDTO);
+        UserResponseDto responseDto = userService.authenticateUser(userRequestDTO);
+        return new BaseResponse<>(ResultType.SUCCESS, responseDto);
     }
 
     // 인증번호 요청 API

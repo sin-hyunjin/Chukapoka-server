@@ -2,24 +2,35 @@ package com.chukapoka.server.user.sevice;
 
 
 
+import com.chukapoka.server.common.authority.JwtTokenProvider;
+import com.chukapoka.server.common.dto.CustomUser;
+import com.chukapoka.server.common.dto.TokenDto;
+import com.chukapoka.server.common.enums.Authority;
 import com.chukapoka.server.common.enums.EmailType;
 import com.chukapoka.server.common.enums.NextActionType;
 import com.chukapoka.server.common.enums.ResultType;
 import com.chukapoka.server.user.dto.*;
 import com.chukapoka.server.user.entity.User;
 import com.chukapoka.server.user.repository.UserRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
+@AllArgsConstructor
 public class UserService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
-
+    private final JwtTokenProvider jwtTokenProvider;
 
     /** 이메일 체크 서비스
      * - 이메일이 등록되어 있는지 확인
@@ -52,7 +63,17 @@ public class UserService {
         if (NextActionType.LOGIN.getValue().equals(type)) {
             User user = authenticate(email, password);
             if (user != null) {
-                return new UserResponseDto(ResultType.SUCCESS, email, user.getId());
+                // Authentication 객체 생성
+                Authentication authentication = new UsernamePasswordAuthenticationToken(
+                        new CustomUser(user.getId(), email, password, List.of(new SimpleGrantedAuthority(Authority.ROLE_USER.getAuthority()))),
+                        null,
+                        List.of(new SimpleGrantedAuthority(Authority.ROLE_USER.getAuthority()))
+                );
+
+                // JWT 토큰 생성
+                TokenDto jwtToken = jwtTokenProvider.createToken(authentication);
+
+                return new UserResponseDto(ResultType.SUCCESS, email, user.getId(), authentication, jwtToken);
             } else {
                 return new UserResponseDto(ResultType.ERROR, email, null);
             }
@@ -93,7 +114,7 @@ public class UserService {
                     .build();
 
             User user= userRepository.save(newUser);
-            System.out.println("user = " + user);
+
             return user.getId();
         } catch (Exception e) {
             
