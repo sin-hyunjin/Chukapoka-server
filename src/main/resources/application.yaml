@@ -1,5 +1,6 @@
 spring:
   profiles:
-#   active: prod
+    # active: prod
    active: dev
-#   active: local
+#    active: dev-db
+#     active: local

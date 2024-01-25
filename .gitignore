@@ -39,5 +39,5 @@ out/
 # MAC
 .DS_Store
 
-
 application-dev-db.yaml
+application-local.yaml

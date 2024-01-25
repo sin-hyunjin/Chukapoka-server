@@ -20,6 +20,7 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+
     /** 이메일 체크 서비스
      * - 이메일이 등록되어 있는지 확인
      * - 등록된 이메일이면 로그인, 등록되지 않은 이메일이면 회원가입으로 처리
