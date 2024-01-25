@@ -85,8 +85,8 @@ public class UserService {
                         .key(authentication.getName())
                         .value(jwtToken.getRefreshToken())
                         .build();
-                refreshTokenRepository.save(refreshToken);
 
+                refreshTokenRepository.save(refreshToken);
                 return new UserResponseDto(ResultType.SUCCESS, email, user.getId(), authentication, jwtToken);
             } else {
                 return new UserResponseDto(ResultType.ERROR, email, null);
@@ -120,11 +120,15 @@ public class UserService {
         try {
             // BCryptPasswordEncoder를 사용하여 비밀번호를 해시화하여 저장
             String hashedPassword = passwordEncoder.encode(password);
+            // 권한을 ROLE_USER로 설정
+            String authorities = Authority.ROLE_USER.getAuthority();
+
             // 새로운 사용자 생성
             User newUser = User.builder()
                     .email(email)
                     .password(hashedPassword)
                     .emailType(EmailType.DEFAULT.name())
+                    .authorities(authorities)
                     .build();
 
             User user= userRepository.save(newUser);
@@ -162,7 +166,7 @@ public class UserService {
         }
 
         // 5. Access Token이 만료되었다면 새로운 토큰 생성 및 저장소 정보 업데이트
-        if (jwtTokenProvider.validateToken(tokenRequestDto.getAccessToken())) {
+        if (jwtTokenProvider.isTokenExpired(tokenRequestDto.getAccessToken())) {
             TokenDto newTokenDto = jwtTokenProvider.createToken(authentication);
 
             RefreshToken newRefreshToken = RefreshToken.builder()

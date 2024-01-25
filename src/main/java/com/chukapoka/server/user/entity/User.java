@@ -2,8 +2,10 @@ package com.chukapoka.server.user.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -33,11 +35,15 @@ public class User {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    @Transient
+    private String authorities;
+
     @Builder
-    public User(String email, String password, String emailType) {
+    public User(String email, String password, String emailType,String authorities)  {
         this.email = email;
         this.password = password;
         this.emailType = emailType;
+        this.authorities = authorities;
         this.updatedAt = LocalDateTime.now();
     }
 

@@ -21,7 +21,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends GenericFilterBean {
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
-    public static final String BEARER_PREFIX = "Bearer ";
+    public static final String BEARER_PREFIX = "Bearer";
     private final JwtTokenProvider jwtTokenProvider;
 
     // 실제 필터링 로직은 doFilterInternal 에 들어감

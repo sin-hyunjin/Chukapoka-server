@@ -3,6 +3,7 @@ package com.chukapoka.server.common.authority;
 
 import com.chukapoka.server.common.dto.CustomUser;
 import com.chukapoka.server.common.dto.TokenDto;
+import com.chukapoka.server.user.entity.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 public class JwtTokenProvider {
     private static final String AUTHORITIES_KEY = "auth";
     private static final String BEARER_TYPE = "Bearer";
+    private static final String USER_KEY = "userId";
     // Access Token 만료 시간 상수 (30분)
     private static final long ACCESS_EXPIRATION_MILLISECONDS = 1000 * 60 * 30;
     // Refresh Token 만료 시간 상수 (7일)
@@ -60,7 +62,7 @@ public class JwtTokenProvider {
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim(AUTHORITIES_KEY, authorities) // 권한
-                .claim("userId", ((CustomUser) authentication.getPrincipal()).getUserId())
+                .claim(USER_KEY, ((CustomUser) authentication.getPrincipal()).getUserId())
                 .setIssuedAt(now)
                 .setExpiration(accessTokenExpiresIn) // 토큰이 만료될시간
                 .signWith(key, SignatureAlgorithm.HS256)  // 비밀키, 암호화 알고리즘이름
@@ -89,7 +91,7 @@ public class JwtTokenProvider {
         Claims claims = parseClaims(token);
 
         String auth = claims.get(AUTHORITIES_KEY, String.class);
-        Long userId = claims.get("userId", Long.class);
+        Long userId = claims.get(USER_KEY, Long.class);
 
         if (userId == null ||  userId <= 0) {
             throw new RuntimeException("Invalid or empty 'userId' claim in JWT token");
@@ -108,6 +110,7 @@ public class JwtTokenProvider {
         // UsernamePasswordAuthenticationToken을 사용하여 Authentication 객체 반환
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
+
     /**
      * JWT 토큰의 유효성을 검증하는 메서드
      */
@@ -141,6 +144,7 @@ public class JwtTokenProvider {
         Claims claims = parseClaims(token);
         return claims.getExpiration().getTime();
     }
+
     public boolean isTokenExpired(String token) {
         Claims claims = parseClaims(token);
         Date expirationDate = claims.getExpiration();
