@@ -14,23 +14,27 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @Table(name = "tb_token")
-public class RefreshToken {
+public class Token {
 
     @Id
-    @Column(name = "rt_key")
+    @Column(name = "token_key")
     private String key;
 
-    @Column(name = "rt_value")
-    private String value;
+    @Column(name = "at_value")
+    private String atValue;
 
+    @Column(name = "rt_value")
+    private String rtValue;
     @Builder
-    public RefreshToken(String key, String value) {
+    public Token(String key, String atValue, String rtValue) {
         this.key = key;
-        this.value = value;
+        this.atValue = atValue;
+        this.rtValue = rtValue;
     }
 
-    public RefreshToken updateValue(String token) {
-        this.value = token;
+    public Token updateValues(String accessToken, String refreshToken) {
+        this.atValue = accessToken;
+        this.rtValue = refreshToken;
         return this;
     }
 

@@ -3,16 +3,16 @@ package com.chukapoka.server.user.sevice;
 
 
 import com.chukapoka.server.common.authority.JwtTokenProvider;
-import com.chukapoka.server.common.dto.BaseResponse;
+
 import com.chukapoka.server.common.dto.CustomUser;
 import com.chukapoka.server.common.dto.TokenDto;
 import com.chukapoka.server.common.dto.TokenRequestDto;
-import com.chukapoka.server.common.entity.RefreshToken;
+import com.chukapoka.server.common.entity.Token;
 import com.chukapoka.server.common.enums.Authority;
 import com.chukapoka.server.common.enums.EmailType;
 import com.chukapoka.server.common.enums.NextActionType;
 import com.chukapoka.server.common.enums.ResultType;
-import com.chukapoka.server.common.repository.RefreshTokenRepository;
+import com.chukapoka.server.common.repository.TokenRepository;
 import com.chukapoka.server.user.dto.*;
 import com.chukapoka.server.user.entity.User;
 import com.chukapoka.server.user.repository.UserRepository;
@@ -33,11 +33,9 @@ import java.util.List;
 public class UserService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
-    @Autowired
     private final UserRepository userRepository;
-    @Autowired
     private final PasswordEncoder passwordEncoder;
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final TokenRepository tokenRepository;
 
     /** 이메일 체크 서비스
      * - 이메일이 등록되어 있는지 확인
@@ -80,12 +78,13 @@ public class UserService {
                 // JWT 토큰 생성
                 TokenDto jwtToken = jwtTokenProvider.createToken(authentication);
 
-                RefreshToken refreshToken = RefreshToken.builder()
+                Token token = Token.builder()
                         .key(authentication.getName())
-                        .value(jwtToken.getRefreshToken())
+                        .atValue(jwtToken.getAccessToken())
+                        .rtValue(jwtToken.getRefreshToken())
                         .build();
 
-                refreshTokenRepository.save(refreshToken);
+                tokenRepository.save(token);
                 return new UserResponseDto(ResultType.SUCCESS, email, user.getId(), authentication, jwtToken);
             } else {
                 return new UserResponseDto(ResultType.ERROR, email, null);
@@ -134,7 +133,7 @@ public class UserService {
 
             return user.getId();
         } catch (Exception e) {
-            
+
             e.printStackTrace();
             return -1L;
         }
@@ -150,7 +149,7 @@ public class UserService {
 
         // 1. Access Token 검증
         if (!jwtTokenProvider.validateToken(accessToken)) {
-            return ResultType.ERROR,"로그아웃 실패";
+            return ResultType.ERROR;
 
         }
 
@@ -158,23 +157,21 @@ public class UserService {
         Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
 
         // 3. 저장소에서 user ID를 기반으로 Refresh Token 값 가져오기
-        RefreshToken refreshTokenEntity = refreshTokenRepository.findByKey(authentication.getName())
+        Token refreshTokenEntity = tokenRepository.findByKey(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("로그아웃된 사용자입니다."));
 
         // 4. Refresh Token이 클라이언트에서 전달한 값과 일치하는지 확인
-        if (!refreshTokenEntity.getValue().equals(refreshToken)) {
+        if (!refreshTokenEntity.getRtValue().equals(refreshToken)) {
             return ResultType.ERROR;
         }
 
         // 5. 저장소에서 Refresh Token 제거
-        refreshTokenRepository.delete(refreshTokenEntity);
+        tokenRepository.delete(refreshTokenEntity);
 
         // 6. 클라이언트에서 Access Token 제거
         return ResultType.SUCCESS;
 
     }
-
-
 
 
     /** 토큰 만료시 재발급
@@ -183,8 +180,6 @@ public class UserService {
      * Refresh Token 은 재사용하지 못하게 저장소에서 값을 갱신해준다.
      */
     public TokenDto reissueToken(TokenRequestDto tokenRequestDto) {
-
-
 
         // 1. Refresh Token 검증
         if (!jwtTokenProvider.validateToken(tokenRequestDto.getRefreshToken())) {
@@ -195,11 +190,11 @@ public class UserService {
         Authentication authentication = jwtTokenProvider.getAuthentication(tokenRequestDto.getAccessToken());
 
         // 3. 저장소에서 user ID 를 기반으로 Refresh Token 값 가져옴
-        RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
+        Token refreshToken = tokenRepository.findByKey(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("로그아웃 된 사용자입니다."));
 
         // 4. Refresh Token 일치하는지 검사
-        if (!refreshToken.getValue().equals(tokenRequestDto.getRefreshToken())) {
+        if (!refreshToken.getRtValue().equals(tokenRequestDto.getRefreshToken())) {
             throw new RuntimeException("토큰의 유저 정보가 일치하지 않습니다.");
         }
 
@@ -207,12 +202,12 @@ public class UserService {
         if (jwtTokenProvider.isTokenExpired(tokenRequestDto.getAccessToken())) {
             TokenDto newTokenDto = jwtTokenProvider.createToken(authentication);
 
-            RefreshToken newRefreshToken = RefreshToken.builder()
+            Token newRefreshToken = Token.builder()
                     .key(authentication.getName())
-                    .value(newTokenDto.getRefreshToken())
+                    .rtValue(newTokenDto.getRefreshToken())
                     .build();
 
-            refreshTokenRepository.save(newRefreshToken);
+            tokenRepository.save(newRefreshToken);
 
             return newTokenDto;
         }
