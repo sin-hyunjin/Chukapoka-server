@@ -3,6 +3,7 @@ package com.chukapoka.server.user.sevice;
 
 
 import com.chukapoka.server.common.authority.JwtTokenProvider;
+import com.chukapoka.server.common.dto.BaseResponse;
 import com.chukapoka.server.common.dto.CustomUser;
 import com.chukapoka.server.common.dto.TokenDto;
 import com.chukapoka.server.common.dto.TokenRequestDto;
@@ -142,15 +143,15 @@ public class UserService {
      * 로그아웃 처리
      * - 클라이언트에서 전달한 Access Token과 Refresh Token을 사용하여 로그아웃 처리
      */
-    public UserResponseDto logout(TokenRequestDto tokenRequestDto) {
-        UserResponseDto responseDto = new UserResponseDto();
+    public ResultType logout(TokenRequestDto tokenRequestDto) {
+
         String accessToken = tokenRequestDto.getAccessToken();
         String refreshToken = tokenRequestDto.getRefreshToken();
 
         // 1. Access Token 검증
         if (!jwtTokenProvider.validateToken(accessToken)) {
-            responseDto.setResult(ResultType.ERROR);
-            return responseDto;
+            return ResultType.ERROR,"로그아웃 실패";
+
         }
 
         // 2. Access Token에서 user ID 가져오기
@@ -162,17 +163,14 @@ public class UserService {
 
         // 4. Refresh Token이 클라이언트에서 전달한 값과 일치하는지 확인
         if (!refreshTokenEntity.getValue().equals(refreshToken)) {
-            responseDto.setResult(ResultType.ERROR);
-            return responseDto;
+            return ResultType.ERROR;
         }
 
         // 5. 저장소에서 Refresh Token 제거
         refreshTokenRepository.delete(refreshTokenEntity);
 
         // 6. 클라이언트에서 Access Token 제거
-        responseDto.setResult(ResultType.SUCCESS);
-
-        return responseDto;
+        return ResultType.SUCCESS;
 
     }
 

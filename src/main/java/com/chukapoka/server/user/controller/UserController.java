@@ -57,9 +57,13 @@ public class UserController {
 
     // 사용자 로그아웃
     @PostMapping("/logout")
-    public BaseResponse<UserResponseDto> logout(@Valid @RequestBody TokenRequestDto tokenRequestDto) {
-        UserResponseDto logout = userService.logout(tokenRequestDto);
-        return new BaseResponse<>(ResultType.SUCCESS, logout, "로그아웃 성공");
+        public BaseResponse<ResultType> logout(@Valid @RequestBody TokenRequestDto tokenRequestDto) {
+        ResultType logout = userService.logout(tokenRequestDto);
+        return new BaseResponse<>(ResultType.SUCCESS, logout);
     }
+//    public BaseResponse<UserResponseDto> logout(@Valid @RequestBody TokenRequestDto tokenRequestDto) {
+//        UserResponseDto logout = userService.logout(tokenRequestDto);
+//        return new BaseResponse<>(ResultType.SUCCESS, logout, "로그아웃 성공");
+//    }
 }
 

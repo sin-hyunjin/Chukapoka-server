@@ -18,6 +18,7 @@ public class UserResponseDto {
     private String email; // "xxxx@xxx.xxx"
     private Long id; // unique_userid
     private TokenDto jwtToken; // JWT 토큰
+
     public UserResponseDto(ResultType result, String email, Long id) {
         this.result = result;
         this.email = email;
