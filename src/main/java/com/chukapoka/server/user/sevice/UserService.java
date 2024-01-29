@@ -11,12 +11,10 @@ import com.chukapoka.server.common.enums.Authority;
 import com.chukapoka.server.common.enums.EmailType;
 import com.chukapoka.server.common.enums.NextActionType;
 import com.chukapoka.server.common.enums.ResultType;
-import com.chukapoka.server.common.exception.InvalidInputException;
 import com.chukapoka.server.common.repository.RefreshTokenRepository;
 import com.chukapoka.server.user.dto.*;
 import com.chukapoka.server.user.entity.User;
 import com.chukapoka.server.user.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -140,14 +138,56 @@ public class UserService {
             return -1L;
         }
     }
+    /**
+     * 로그아웃 처리
+     * - 클라이언트에서 전달한 Access Token과 Refresh Token을 사용하여 로그아웃 처리
+     */
+    public UserResponseDto logout(TokenRequestDto tokenRequestDto) {
+        UserResponseDto responseDto = new UserResponseDto();
+        String accessToken = tokenRequestDto.getAccessToken();
+        String refreshToken = tokenRequestDto.getRefreshToken();
+
+        // 1. Access Token 검증
+        if (!jwtTokenProvider.validateToken(accessToken)) {
+            responseDto.setResult(ResultType.ERROR);
+            return responseDto;
+        }
+
+        // 2. Access Token에서 user ID 가져오기
+        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+
+        // 3. 저장소에서 user ID를 기반으로 Refresh Token 값 가져오기
+        RefreshToken refreshTokenEntity = refreshTokenRepository.findByKey(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("로그아웃된 사용자입니다."));
+
+        // 4. Refresh Token이 클라이언트에서 전달한 값과 일치하는지 확인
+        if (!refreshTokenEntity.getValue().equals(refreshToken)) {
+            responseDto.setResult(ResultType.ERROR);
+            return responseDto;
+        }
+
+        // 5. 저장소에서 Refresh Token 제거
+        refreshTokenRepository.delete(refreshTokenEntity);
+
+        // 6. 클라이언트에서 Access Token 제거
+        responseDto.setResult(ResultType.SUCCESS);
+
+        return responseDto;
+
+    }
+
+
+
 
     /** 토큰 만료시 재발급
      * Access Token을 복호화하여 유저 정보 (USER ID)를 가져오고 저장소에 있는 Refresh Token과 클라이언트가 전달한 Refresh Token의 일치 여부를 검사한다.
      * 만약 일치한다면 로그인했을 때와 동일하게 새로운 토큰을 생성해서 클라이언트에게 전달한다.
      * Refresh Token 은 재사용하지 못하게 저장소에서 값을 갱신해준다.
      */
-    @Transactional
     public TokenDto reissueToken(TokenRequestDto tokenRequestDto) {
+
+
+
         // 1. Refresh Token 검증
         if (!jwtTokenProvider.validateToken(tokenRequestDto.getRefreshToken())) {
             throw new RuntimeException("Refresh Token 이 유효하지 않습니다.");

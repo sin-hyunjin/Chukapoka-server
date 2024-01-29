@@ -74,16 +74,7 @@ public class AuthNumberService {
 
     // 이메일 폼
     private String buildEmailContent(String authNum) {
-        return "<div style='margin:20px;'>"
-                + "<h1> Chukapoka 이메일 인증번호 입니다.</h1><br>"
-                + "<p>아래 인증번호를 입력해주세요<p><br>"
-                + "<div align='center' style='border:1px solid black; font-family:verdana';>"
-                + "<h3 style='color:blue;'>회원가입 이메일 인증번호입니다.</h3>"
-                + "<div style='font-size:130%'>"
-                + "CODE : <strong>"
-                + authNum
-                + "</strong><div><br/> "
-                + "</div>";
+        return STR."<div style='margin:20px;'> <h1> Chukapoka 이메일 인증번호 입니다.</h1><br><p>아래 인증번호를 입력해주세요<p><br><div align='center' style='border:1px solid black; font-family:verdana';><h3 style='color:blue;'>회원가입 이메일 인증번호입니다.</h3><div style='font-size:130%'>CODE : <strong>\{authNum}</strong><div><br/> </div>";
     }
     
 }
