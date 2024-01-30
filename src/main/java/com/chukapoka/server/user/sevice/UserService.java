@@ -69,7 +69,7 @@ public class UserService {
             if (user != null) {
                 // Authentication 객체 생성
                 Authentication authentication = new UsernamePasswordAuthenticationToken(
-                        new CustomUser(user.getId().toString(), email, password, List.of(new SimpleGrantedAuthority(Authority.ROLE_USER.getAuthority()))),
+                        new CustomUser(user.getId(), password, List.of(new SimpleGrantedAuthority(Authority.ROLE_USER.getAuthority()))),
                         null,
                         List.of(new SimpleGrantedAuthority(Authority.ROLE_USER.getAuthority()))
                 );

@@ -62,7 +62,7 @@ public class JwtTokenProvider {
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim(AUTHORITIES_KEY, authorities) // 권한
-                .claim(USER_KEY, ((CustomUser) authentication.getPrincipal()).getEmail())
+                .claim(USER_KEY, ((CustomUser) authentication.getPrincipal()).getUserId())
                 .setIssuedAt(now)
                 .setExpiration(accessTokenExpiresIn) // 토큰이 만료될시간
                 .signWith(key, SignatureAlgorithm.HS256)  // 비밀키, 암호화 알고리즘이름
@@ -106,7 +106,7 @@ public class JwtTokenProvider {
                 .collect(Collectors.toList());
 
         // UserDetails 객체 생성
-        UserDetails principal = new CustomUser(userId.toString(), claims.getSubject(), "", authorities);
+        UserDetails principal = new CustomUser(userId, claims.getSubject(), authorities);
 
         // UsernamePasswordAuthenticationToken을 사용하여 Authentication 객체 반환
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);

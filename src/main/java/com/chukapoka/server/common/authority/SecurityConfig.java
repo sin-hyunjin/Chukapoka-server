@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests((authorizeRequests) -> {
                             authorizeRequests
-                                    .requestMatchers("/api/user/emailcheck", "/api/user", "/api/user/authNumber", "api/user/reissue").anonymous();
+                                    .requestMatchers("/api/user/emailcheck", "/api/user", "/api/user/authNumber", "api/user/reissue","api/user/test").anonymous();
 //                                    .requestMatchers("/api/user/**").hasAnyRole(Authority.ROLE_USER.getAuthority())
 //                                    .anyRequest().permitAll();
 

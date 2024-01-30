@@ -12,11 +12,11 @@ import java.util.Collection;
  */
 @Getter
 public class CustomUser extends User {
-    private final String email;
+    private final Long userId;
 
-    public CustomUser(String userId, String email, String password, Collection<? extends GrantedAuthority> authorities) {
-        super(userId, password, authorities);
-        this.email = email;
+    public CustomUser(Long userId, String password, Collection<? extends GrantedAuthority> authorities) {
+        super(String.valueOf(userId), password, authorities);
+        this.userId = userId;
     }
 
 }

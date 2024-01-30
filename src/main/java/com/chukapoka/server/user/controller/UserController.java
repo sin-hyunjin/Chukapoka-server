@@ -65,5 +65,15 @@ public class UserController {
 //        UserResponseDto logout = userService.logout(tokenRequestDto);
 //        return new BaseResponse<>(ResultType.SUCCESS, logout, "로그아웃 성공");
 //    }
+
+
+    @GetMapping("/test")
+    public BaseResponse<TokenDto> checkToken(@RequestHeader("Authorization") String authorizationHeader) {
+        TokenRequestDto tokenRequestDto = new TokenRequestDto();
+        tokenRequestDto.setRefreshToken(authorizationHeader);
+
+        TokenDto tokenDto = userService.reissueToken(tokenRequestDto);
+        return new BaseResponse<>(ResultType.SUCCESS, tokenDto);
+    }
 }
 
