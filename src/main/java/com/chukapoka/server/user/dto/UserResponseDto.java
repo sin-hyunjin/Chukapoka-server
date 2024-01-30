@@ -3,7 +3,7 @@ package com.chukapoka.server.user.dto;
 import com.chukapoka.server.common.dto.TokenDto;
 import com.chukapoka.server.common.enums.ResultType;
 
-import com.chukapoka.server.user.entity.User;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.Authentication;

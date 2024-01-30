@@ -2,7 +2,7 @@ package com.chukapoka.server.common.dto;
 
 
 import com.chukapoka.server.common.enums.ResultType;
-import com.chukapoka.server.user.dto.UserResponseDto;
+
 import lombok.Data;
 
 @Data

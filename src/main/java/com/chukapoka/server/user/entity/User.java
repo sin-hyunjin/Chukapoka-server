@@ -2,10 +2,10 @@ package com.chukapoka.server.user.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
 
 import java.time.LocalDateTime;
-import java.util.List;
+
 
 @Entity
 @Data

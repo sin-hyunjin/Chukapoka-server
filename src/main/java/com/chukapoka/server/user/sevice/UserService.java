@@ -17,7 +17,6 @@ import com.chukapoka.server.user.dto.*;
 import com.chukapoka.server.user.entity.User;
 import com.chukapoka.server.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -70,7 +69,7 @@ public class UserService {
             if (user != null) {
                 // Authentication 객체 생성
                 Authentication authentication = new UsernamePasswordAuthenticationToken(
-                        new CustomUser(user.getId(), email, password, List.of(new SimpleGrantedAuthority(Authority.ROLE_USER.getAuthority()))),
+                        new CustomUser(user.getId().toString(), email, password, List.of(new SimpleGrantedAuthority(Authority.ROLE_USER.getAuthority()))),
                         null,
                         List.of(new SimpleGrantedAuthority(Authority.ROLE_USER.getAuthority()))
                 );
@@ -138,6 +137,8 @@ public class UserService {
             return -1L;
         }
     }
+
+
     /**
      * 로그아웃 처리
      * - 클라이언트에서 전달한 Access Token과 Refresh Token을 사용하여 로그아웃 처리
@@ -150,7 +151,6 @@ public class UserService {
         // 1. Access Token 검증
         if (!jwtTokenProvider.validateToken(accessToken)) {
             return ResultType.ERROR;
-
         }
 
         // 2. Access Token에서 user ID 가져오기
@@ -201,7 +201,6 @@ public class UserService {
         // 5. Access Token이 만료되었다면 새로운 토큰 생성 및 저장소 정보 업데이트
         if (jwtTokenProvider.isTokenExpired(tokenRequestDto.getAccessToken())) {
             TokenDto newTokenDto = jwtTokenProvider.createToken(authentication);
-
             Token newRefreshToken = Token.builder()
                     .key(authentication.getName())
                     .rtValue(newTokenDto.getRefreshToken())

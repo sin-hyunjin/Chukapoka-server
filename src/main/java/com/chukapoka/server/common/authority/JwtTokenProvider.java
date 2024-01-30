@@ -3,7 +3,7 @@ package com.chukapoka.server.common.authority;
 
 import com.chukapoka.server.common.dto.CustomUser;
 import com.chukapoka.server.common.dto.TokenDto;
-import com.chukapoka.server.user.entity.User;
+
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -62,11 +62,12 @@ public class JwtTokenProvider {
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim(AUTHORITIES_KEY, authorities) // 권한
-                .claim(USER_KEY, ((CustomUser) authentication.getPrincipal()).getUserId())
+                .claim(USER_KEY, ((CustomUser) authentication.getPrincipal()).getEmail())
                 .setIssuedAt(now)
                 .setExpiration(accessTokenExpiresIn) // 토큰이 만료될시간
                 .signWith(key, SignatureAlgorithm.HS256)  // 비밀키, 암호화 알고리즘이름
                 .compact();
+
 
         // Refresh Token 생성
         String refreshToken = Jwts.builder()
@@ -105,7 +106,7 @@ public class JwtTokenProvider {
                 .collect(Collectors.toList());
 
         // UserDetails 객체 생성
-        UserDetails principal = new CustomUser(userId, claims.getSubject(), "", authorities);
+        UserDetails principal = new CustomUser(userId.toString(), claims.getSubject(), "", authorities);
 
         // UsernamePasswordAuthenticationToken을 사용하여 Authentication 객체 반환
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);

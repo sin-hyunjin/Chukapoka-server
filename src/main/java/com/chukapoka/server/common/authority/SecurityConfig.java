@@ -1,6 +1,7 @@
 package com.chukapoka.server.common.authority;
 
 
+import com.chukapoka.server.common.enums.Authority;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -32,8 +33,11 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests((authorizeRequests) -> {
-                    authorizeRequests
-                            .requestMatchers("/api/user/emailcheck", "/api/user/**").anonymous();
+                            authorizeRequests
+                                    .requestMatchers("/api/user/emailcheck", "/api/user", "/api/user/authNumber", "api/user/reissue").anonymous();
+//                                    .requestMatchers("/api/user/**").hasAnyRole(Authority.ROLE_USER.getAuthority())
+//                                    .anyRequest().permitAll();
+
 
                 }
 

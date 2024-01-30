@@ -1,6 +1,6 @@
 package com.chukapoka.server.user.dto;
 
-import com.chukapoka.server.common.enums.NextActionType;
+
 import lombok.Data;
 
 
