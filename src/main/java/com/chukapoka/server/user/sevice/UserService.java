@@ -143,10 +143,9 @@ public class UserService {
      * 로그아웃 처리
      * - 클라이언트에서 전달한 Access Token과 Refresh Token을 사용하여 로그아웃 처리
      */
-    public ResultType logout(TokenRequestDto tokenRequestDto) {
-
-        String accessToken = tokenRequestDto.getAccessToken();
-        String refreshToken = tokenRequestDto.getRefreshToken();
+    // UserService.java
+    public ResultType logout(LogoutRequestDto logoutRequestDto) {
+        String accessToken = logoutRequestDto.getAccessToken();
 
         // 1. Access Token 검증
         if (!jwtTokenProvider.validateToken(accessToken)) {
@@ -160,18 +159,40 @@ public class UserService {
         Token refreshTokenEntity = tokenRepository.findByKey(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("로그아웃된 사용자입니다."));
 
-        // 4. Refresh Token이 클라이언트에서 전달한 값과 일치하는지 확인
-        if (!refreshTokenEntity.getRtValue().equals(refreshToken)) {
-            return ResultType.ERROR;
-        }
-
-        // 5. 저장소에서 Refresh Token 제거
+        // 4. 저장소에서 Refresh Token 제거
         tokenRepository.delete(refreshTokenEntity);
-
-        // 6. 클라이언트에서 Access Token 제거
         return ResultType.SUCCESS;
-
     }
+
+//    public ResultType logout(TokenRequestDto tokenRequestDto) {
+//
+//        String accessToken = tokenRequestDto.getAccessToken();
+//        String refreshToken = tokenRequestDto.getRefreshToken();
+//
+//        // 1. Access Token 검증
+//        if (!jwtTokenProvider.validateToken(accessToken)) {
+//            return ResultType.ERROR;
+//        }
+//
+//        // 2. Access Token에서 user ID 가져오기
+//        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+//
+//        // 3. 저장소에서 user ID를 기반으로 Refresh Token 값 가져오기
+//        Token refreshTokenEntity = tokenRepository.findByKey(authentication.getName())
+//                .orElseThrow(() -> new RuntimeException("로그아웃된 사용자입니다."));
+//
+//        // 4. Refresh Token이 클라이언트에서 전달한 값과 일치하는지 확인
+//        if (!refreshTokenEntity.getRtValue().equals(refreshToken)) {
+//            return ResultType.ERROR;
+//        }
+//
+//        // 5. 저장소에서 Refresh Token 제거
+//        tokenRepository.delete(refreshTokenEntity);
+//
+//        // 6. 클라이언트에서 Access Token 제거
+//        return ResultType.SUCCESS;
+//
+//    }
 
 
     /** 토큰 만료시 재발급

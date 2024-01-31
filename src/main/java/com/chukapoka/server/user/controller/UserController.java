@@ -58,15 +58,24 @@ public class UserController {
     }
 
     // 사용자 로그아웃
+//    @PostMapping("/logout")
+//        public BaseResponse<ResultType> logout(@Valid @RequestBody LogoutRequestDto logoutRequestDto) {
+//        ResultType logout = userService.logout(logoutRequestDto);
+//        return new BaseResponse<>(ResultType.SUCCESS, logout);
+//    }
     @PostMapping("/logout")
-        public BaseResponse<ResultType> logout(@Valid @RequestBody TokenRequestDto tokenRequestDto) {
-        ResultType logout = userService.logout(tokenRequestDto);
+    public BaseResponse<ResultType> logout(@Valid @RequestHeader("Authorization") String authorizationHeader) {
+
+        // "Bearer " 다음의 토큰 값만 추출
+        String accessToken = authorizationHeader.substring(7);
+        LogoutRequestDto logoutRequestDto = new LogoutRequestDto();
+        System.out.println("accessToken = " + accessToken);
+        logoutRequestDto.setAccessToken(accessToken);
+
+        ResultType logout = userService.logout(logoutRequestDto);
         return new BaseResponse<>(ResultType.SUCCESS, logout);
     }
-//    public BaseResponse<UserResponseDto> logout(@Valid @RequestBody TokenRequestDto tokenRequestDto) {
-//        UserResponseDto logout = userService.logout(tokenRequestDto);
-//        return new BaseResponse<>(ResultType.SUCCESS, logout, "로그아웃 성공");
-//    }
+
 
 
     @GetMapping("/test")
