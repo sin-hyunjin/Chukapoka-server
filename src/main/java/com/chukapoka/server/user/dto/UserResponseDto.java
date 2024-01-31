@@ -4,11 +4,14 @@ import com.chukapoka.server.common.dto.TokenDto;
 import com.chukapoka.server.common.enums.ResultType;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.Authentication;
 
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
 public class UserResponseDto {
 

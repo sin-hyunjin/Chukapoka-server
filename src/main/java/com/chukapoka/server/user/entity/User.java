@@ -36,7 +36,7 @@ public class User {
     private LocalDateTime updatedAt;
 
     @Transient
-    private String authorities;
+    private String authorities; // 권한 ROLE_USER || ROLE_ADMIN
 
     @Builder
     public User(String email, String password, String emailType,String authorities)  {

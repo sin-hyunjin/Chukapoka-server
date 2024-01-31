@@ -2,6 +2,7 @@ package com.chukapoka.server.user.controller;
 
 
 import com.chukapoka.server.common.dto.BaseResponse;
+import com.chukapoka.server.common.dto.CustomUser;
 import com.chukapoka.server.common.dto.TokenDto;
 import com.chukapoka.server.common.dto.TokenRequestDto;
 import com.chukapoka.server.common.enums.ResultType;
@@ -14,6 +15,7 @@ import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
@@ -68,12 +70,20 @@ public class UserController {
 
 
     @GetMapping("/test")
-    public BaseResponse<TokenDto> checkToken(@RequestHeader("Authorization") String authorizationHeader) {
-        TokenRequestDto tokenRequestDto = new TokenRequestDto();
-        tokenRequestDto.setRefreshToken(authorizationHeader);
+    public BaseResponse<UserResponseDto> searchMyInfo() {
+        CustomUser customUser = (CustomUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long userId = customUser.getUserId();
 
-        TokenDto tokenDto = userService.reissueToken(tokenRequestDto);
-        return new BaseResponse<>(ResultType.SUCCESS, tokenDto);
+        // userId 등을 이용하여 사용자 정보를 가져오는 로직
+        // ...
+
+        // 가져온 사용자 정보로 MemberDtoResponse를 생성
+        UserResponseDto response = new UserResponseDto();
+        response.setId(userId);
+        // 다른 필요한 정보들을 설정
+
+        return new BaseResponse<>(ResultType.SUCCESS, response);
     }
+
 }
 
