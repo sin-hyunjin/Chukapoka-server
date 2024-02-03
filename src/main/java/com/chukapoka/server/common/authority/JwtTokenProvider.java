@@ -139,8 +139,6 @@ public class JwtTokenProvider {
             return e.getClaims();
         }
     }
-
-
     public Long getExpirationTime(String token) {
         Claims claims = parseClaims(token);
         return claims.getExpiration().getTime();

@@ -25,7 +25,6 @@ import java.io.UnsupportedEncodingException;
 public class UserController {
     @Autowired
     private UserService userService;
-
     @Autowired
     private AuthNumberService authNumberService;
 
@@ -57,42 +56,16 @@ public class UserController {
         return new BaseResponse<>(ResultType.SUCCESS, tokenDto);
     }
 
-    // 사용자 로그아웃
-//    @PostMapping("/logout")
-//        public BaseResponse<ResultType> logout(@Valid @RequestBody LogoutRequestDto logoutRequestDto) {
-//        ResultType logout = userService.logout(logoutRequestDto);
-//        return new BaseResponse<>(ResultType.SUCCESS, logout);
-//    }
+//     사용자 로그아웃
     @PostMapping("/logout")
-    public BaseResponse<ResultType> logout(@Valid @RequestHeader("Authorization") String authorizationHeader) {
-
-        // "Bearer " 다음의 토큰 값만 추출
-        String accessToken = authorizationHeader.substring(7);
-        LogoutRequestDto logoutRequestDto = new LogoutRequestDto();
-        System.out.println("accessToken = " + accessToken);
-        logoutRequestDto.setAccessToken(accessToken);
-
-        ResultType logout = userService.logout(logoutRequestDto);
+        public BaseResponse<ResultType> logout() {
+        // 인증된 사용자 Id
+        long userId = ((CustomUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
+        // 사용자의 ID를 기반으로 로그아웃 수행
+        ResultType logout = userService.logout(userId);
         return new BaseResponse<>(ResultType.SUCCESS, logout);
     }
 
-
-
-    @GetMapping("/test")
-    public BaseResponse<UserResponseDto> searchMyInfo() {
-        CustomUser customUser = (CustomUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Long userId = customUser.getUserId();
-
-        // userId 등을 이용하여 사용자 정보를 가져오는 로직
-        // ...
-
-        // 가져온 사용자 정보로 MemberDtoResponse를 생성
-        UserResponseDto response = new UserResponseDto();
-        response.setId(userId);
-        // 다른 필요한 정보들을 설정
-
-        return new BaseResponse<>(ResultType.SUCCESS, response);
-    }
 
 }
 
