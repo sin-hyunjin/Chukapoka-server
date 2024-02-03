@@ -19,6 +19,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'javax.servlet:javax.servlet-api:4.0.1'
+
+
 	// 개발 중에만 필요한 의존성 (예: 빌드 재시작 등)
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 

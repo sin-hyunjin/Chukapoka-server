@@ -7,8 +7,8 @@ import java.util.Map;
 
 @Getter
 public enum Authority {
-    ROLE_USER("ROLE_USER"),
-    ROLE_ADMIN("ADMIN");
+    USER("USER"),
+    ADMIN("ADMIN");
 
     private final String authority;
     private static final Map<String, Authority> lookup = new HashMap<>();

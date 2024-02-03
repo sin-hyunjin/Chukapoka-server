@@ -35,7 +35,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorizeRequests) -> {
                             authorizeRequests
                                     .requestMatchers("/api/user/emailcheck", "/api/user", "/api/user/authNumber", "api/user/reissue" ).anonymous()
-                                    .requestMatchers("/api/user/test","/api/user/logout").hasAnyRole("USER") //  hasAnyRole은 "ROLE_" 접두사를 자동으로 추가해줌 하지만 Authority는 "ROLE_USER"로 설정해야했음 이것떄문에 회원가입할떄 권한이 안넘어갔음
+
+                                    .requestMatchers("/api/user/test","/api/user/logout").hasRole(Authority.USER.getAuthority())//  hasAnyRole은 "ROLE_" 접두사를 자동으로 추가해줌 하지만 Authority는 "ROLE_USER"로 설정해야했음 이것떄문에 회원가입할떄 권한이 안넘어갔음
                                     .anyRequest().permitAll();
 
 

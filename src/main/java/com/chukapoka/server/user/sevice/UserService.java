@@ -25,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -69,10 +70,11 @@ public class UserService {
             if (user != null) {
                 // Authentication 객체 생성
                 Authentication authentication = new UsernamePasswordAuthenticationToken(
-                        new CustomUser(user.getId(), password, List.of(new SimpleGrantedAuthority(Authority.ROLE_USER.getAuthority()))),
+                        new CustomUser(user.getId(), password, List.of(new SimpleGrantedAuthority("ROLE" + Authority.USER.getAuthority()))),
                         null,
-                        List.of(new SimpleGrantedAuthority(Authority.ROLE_USER.getAuthority()))
+                        List.of(new SimpleGrantedAuthority("ROLE_" + Authority.USER.getAuthority()))
                 );
+
 
                 // JWT 토큰 생성
                 TokenDto jwtToken = jwtTokenProvider.createToken(authentication);
@@ -103,7 +105,10 @@ public class UserService {
 
     // 데이터베이스에서 이메일과 비밀번호를 확인하는 로직
     private User authenticate(String email, String password) {
-        User user = userRepository.findByEmail(email);
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+
+        // Optional에서 User 객체를 얻기
+        User user = optionalUser.orElse(null);
 
         // 저장된 비밀번호 해시와 입력된 비밀번호를 비교
         if (user != null && passwordEncoder.matches(password, user.getPassword())) {
@@ -118,8 +123,8 @@ public class UserService {
             // BCryptPasswordEncoder를 사용하여 비밀번호를 해시화하여 저장
             String hashedPassword = passwordEncoder.encode(password);
             // 권한을 ROLE_USER로 설정
-            String authorities = Authority.ROLE_USER.getAuthority();
-
+            String authorities = "ROLE_" + Authority.USER.getAuthority();
+            System.out.println("authorities = " + authorities);
             // 새로운 사용자 생성
             User newUser = User.builder()
                     .email(email)

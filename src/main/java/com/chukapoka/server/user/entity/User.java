@@ -2,6 +2,7 @@ package com.chukapoka.server.user.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.userdetails.UserDetails;
 
 
 import java.time.LocalDateTime;
@@ -46,6 +47,7 @@ public class User {
         this.authorities = authorities;
         this.updatedAt = LocalDateTime.now();
     }
+
 
 
 }
