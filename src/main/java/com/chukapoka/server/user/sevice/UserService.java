@@ -41,7 +41,9 @@ public class UserService {
      * - 이메일이 등록되어 있는지 확인
      * - 등록된 이메일이면 로그인, 등록되지 않은 이메일이면 회원가입으로 처리
      */
-    public EmailCheckResponseDto checkEmail(EmailCheckRequestDto emailCheckRequestDto) {
+
+
+    public EmailCheckResponseDto emailCheck(EmailCheckRequestDto emailCheckRequestDto) {
         String email = emailCheckRequestDto.getEmail();
         String emailType = emailCheckRequestDto.getEmailType();
         // 이메일이 이미 등록되어 있는지 확인
@@ -59,48 +61,68 @@ public class UserService {
      * - "type"이 "login"이면 사용자의 이메일과 비밀번호를 확인하여 로그인 처리
      * - "type"이 "join"이면 사용자를 등록
      */
-    public UserResponseDto authenticateUser(UserRequestDto userRequestDto) {
+    // 로그인 처리 메서드
+    public UserResponseDto login(UserRequestDto userRequestDto) {
         String email = userRequestDto.getEmail();
         String password = userRequestDto.getPassword();
-        String type = userRequestDto.getType(); // LOGIN || JOIN
 
-        // 로그인
-        if (NextActionType.LOGIN.getValue().equals(type)) {
-            User user = authenticate(email, password);
-            if (user != null) {
-                // Authentication 객체 생성
-                Authentication authentication = new UsernamePasswordAuthenticationToken(
-                        new CustomUser(user.getId(), password, List.of(new SimpleGrantedAuthority("ROLE" + Authority.USER.getAuthority()))),
-                        null,
-                        List.of(new SimpleGrantedAuthority("ROLE_" + Authority.USER.getAuthority()))
-                );
+        User user = authenticate(email, password);
+        if (user != null) {
+            // Authentication 객체 생성
+            Authentication authentication = new UsernamePasswordAuthenticationToken(
+                    new CustomUser(user.getId(), password, List.of(new SimpleGrantedAuthority("ROLE" + Authority.USER.getAuthority()))),
+                    null,
+                    List.of(new SimpleGrantedAuthority("ROLE_" + Authority.USER.getAuthority()))
+            );
 
+            // JWT 토큰 생성
+            TokenDto jwtToken = jwtTokenProvider.createToken(authentication);
 
-                // JWT 토큰 생성
-                TokenDto jwtToken = jwtTokenProvider.createToken(authentication);
+            Token token = Token.builder()
+                    .key(authentication.getName())
+                    .atValue(jwtToken.getAccessToken())
+                    .rtValue(jwtToken.getRefreshToken())
+                    .build();
 
-                Token token = Token.builder()
-                        .key(authentication.getName())
-                        .atValue(jwtToken.getAccessToken())
-                        .rtValue(jwtToken.getRefreshToken())
-                        .build();
-
-                tokenRepository.save(token);
-                return new UserResponseDto(ResultType.SUCCESS, email, user.getId(), authentication, jwtToken);
-            } else {
-                return new UserResponseDto(ResultType.ERROR, email, null);
-            }
+            tokenRepository.save(token);
+            return new UserResponseDto(ResultType.SUCCESS, email, user.getId(), authentication, jwtToken);
+        } else {
+            return new UserResponseDto(ResultType.ERROR, email, null);
         }
-        // 회원가입
-        if (NextActionType.JOIN.getValue().equals(type)) {
-            Long newId = signIn(email, password);
-            if(newId != null && newId != -1L){
-                return new UserResponseDto(ResultType.SUCCESS, email, newId);
-            }else {
-                return new UserResponseDto(ResultType.ERROR, email, null);
-            }
+    }
+
+    // 회원가입 처리 메서드
+    public UserResponseDto join(UserRequestDto userRequestDto) {
+        String email = userRequestDto.getEmail();
+        String password = userRequestDto.getPassword();
+
+        Long newId = signUp(email, password);
+
+        if (newId != null && newId != -1L) {
+            User newUser = userRepository.findById(newId)
+                    .orElseThrow(() -> new RuntimeException("회원이 존재합니다."));
+
+            Authentication authentication = new UsernamePasswordAuthenticationToken(
+                    new CustomUser(newUser.getId(), password, List.of(new SimpleGrantedAuthority("ROLE" + Authority.USER.getAuthority()))),
+                    null,
+                    List.of(new SimpleGrantedAuthority("ROLE_" + Authority.USER.getAuthority()))
+            );
+
+            // JWT 토큰 생성
+            TokenDto jwtToken = jwtTokenProvider.createToken(authentication);
+
+            Token token = Token.builder()
+                    .key(authentication.getName())
+                    .atValue(jwtToken.getAccessToken())
+                    .rtValue(jwtToken.getRefreshToken())
+                    .build();
+
+            tokenRepository.save(token);
+
+            return new UserResponseDto(ResultType.SUCCESS, email, newId, authentication, jwtToken);
+        } else {
+            return new UserResponseDto(ResultType.ERROR, email, null);
         }
-        return new UserResponseDto(ResultType.ERROR, email, null);
     }
 
     // 데이터베이스에서 이메일과 비밀번호를 확인하는 로직
@@ -117,14 +139,14 @@ public class UserService {
         // 사용자가 존재하지 않음
         return null;
     }
+
     // 회원가입 로직
-    public Long signIn(String email, String password) {
+    public Long signUp(String email, String password) {
         try {
             // BCryptPasswordEncoder를 사용하여 비밀번호를 해시화하여 저장
             String hashedPassword = passwordEncoder.encode(password);
             // 권한을 ROLE_USER로 설정
             String authorities = "ROLE_" + Authority.USER.getAuthority();
-            System.out.println("authorities = " + authorities);
             // 새로운 사용자 생성
             User newUser = User.builder()
                     .email(email)
@@ -134,7 +156,6 @@ public class UserService {
                     .build();
 
             User user= userRepository.save(newUser);
-
             return user.getId();
         } catch (Exception e) {
 
@@ -142,6 +163,7 @@ public class UserService {
             return -1L;
         }
     }
+
     /**
      * 로그아웃 처리
      * - 클라이언트에서 전달한 Access Token과 Refresh Token을 사용하여 로그아웃 처리
@@ -171,7 +193,7 @@ public class UserService {
      * 만약 일치한다면 로그인했을 때와 동일하게 새로운 토큰을 생성해서 클라이언트에게 전달한다.
      * Refresh Token 은 재사용하지 못하게 저장소에서 값을 갱신해준다.
      */
-    public TokenDto reissueToken(TokenRequestDto tokenRequestDto) {
+    public TokenDto reissue(TokenRequestDto tokenRequestDto) {
 
         // 1. Refresh Token 검증
         if (!jwtTokenProvider.validateToken(tokenRequestDto.getRefreshToken())) {
@@ -211,4 +233,6 @@ public class UserService {
                 .accessTokenExpiresIn(jwtTokenProvider.getExpirationTime(tokenRequestDto.getAccessToken()))
                 .build();
     }
+
+
 }

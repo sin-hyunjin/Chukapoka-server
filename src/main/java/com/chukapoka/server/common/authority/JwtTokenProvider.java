@@ -4,6 +4,7 @@ package com.chukapoka.server.common.authority;
 import com.chukapoka.server.common.dto.CustomUser;
 import com.chukapoka.server.common.dto.TokenDto;
 
+import com.chukapoka.server.common.dto.TokenRequestDto;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class JwtTokenProvider {
+
     private static final String AUTHORITIES_KEY = "auth";
     private static final String BEARER_TYPE = "Bearer";
     private static final String USER_KEY = "userId";
@@ -84,6 +86,10 @@ public class JwtTokenProvider {
                 .refreshToken(refreshToken)
                 .build();
     }
+
+
+
+
     /**
      * JWT 토큰에서 사용자 정보를 추출하여 인증 객체를 반환하는 메서드
      */
@@ -132,7 +138,7 @@ public class JwtTokenProvider {
     }
 
     // JWT 토큰에서 클레임(클레임을 포함한 부분)을 추출하는 메서드
-    private Claims parseClaims(String accessToken) {
+    Claims parseClaims(String accessToken) {
         try {
             return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
         } catch (ExpiredJwtException e) {
@@ -149,4 +155,6 @@ public class JwtTokenProvider {
         Date expirationDate = claims.getExpiration();
         return expirationDate != null && expirationDate.before(new Date());
     }
+
+
 }

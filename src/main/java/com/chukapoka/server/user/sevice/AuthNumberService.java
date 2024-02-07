@@ -51,7 +51,7 @@ public class AuthNumberService {
     }
 
     // 실제 메일 전송
-    public AuthNumberResponseDto sendEmail(String email) throws MessagingException, UnsupportedEncodingException {
+    public AuthNumberResponseDto authNumber(String email) throws MessagingException, UnsupportedEncodingException {
         String authNum = createCode();
         LocalDateTime createdAt = LocalDateTime.now();
         LocalDateTime expiredAt = createdAt.plusMinutes(5); // 유효시간은 5분

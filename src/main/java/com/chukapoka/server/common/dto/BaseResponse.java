@@ -23,6 +23,4 @@ public class BaseResponse<T> {
         this.data = data;
         this.message = message;
     }
-
-
 }
