@@ -4,7 +4,6 @@ package com.chukapoka.server.common.authority;
 import com.chukapoka.server.common.dto.CustomUser;
 import com.chukapoka.server.common.dto.TokenDto;
 
-import com.chukapoka.server.common.dto.TokenRequestDto;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -74,6 +73,8 @@ public class JwtTokenProvider {
         // Refresh Token 생성
         String refreshToken = Jwts.builder()
                 .setSubject(authentication.getName())
+                .claim(AUTHORITIES_KEY, authorities) // 권한
+                .claim(USER_KEY, ((CustomUser) authentication.getPrincipal()).getUserId())  // user id
                 .setIssuedAt(now)
                 .setExpiration(refreshExpiration)
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -138,9 +139,9 @@ public class JwtTokenProvider {
     }
 
     // JWT 토큰에서 클레임(클레임을 포함한 부분)을 추출하는 메서드
-    Claims parseClaims(String accessToken) {
+    Claims parseClaims(String token) {
         try {
-            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
+            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }

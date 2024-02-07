@@ -3,6 +3,7 @@ package com.chukapoka.server.common.authority;
 
 import com.chukapoka.server.common.enums.Authority;
 import com.chukapoka.server.common.repository.TokenRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,22 +22,23 @@ public class SecurityConfig {
     /**
      * Spring Security 6.1.0부터는 메서드 체이닝의 사용을 지양하고 람다식을 통해 함수형으로 설정하게 지향함
      */
-    private final JwtTokenProvider jwtTokenProvider;
-    public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+    private TokenRepository tokenRepository;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, tokenRepository), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests((authorizeRequests) -> {
                             authorizeRequests
-                                    .requestMatchers("/api/user/emailcheck", "/api/user", "/api/user/authNumber", "api/user/reissue" ).anonymous()
+                                    .requestMatchers("/api/user/emailcheck", "/api/user", "/api/user/authNumber" ).anonymous()
 
-                                    .requestMatchers("/api/user/test","/api/user/logout").hasRole(Authority.USER.getAuthority())//  hasAnyRole은 "ROLE_" 접두사를 자동으로 추가해줌 하지만 Authority는 "ROLE_USER"로 설정해야했음 이것떄문에 회원가입할떄 권한이 안넘어갔음
+                                    .requestMatchers("/api/user/logout", "api/user/reissue").hasRole(Authority.USER.getAuthority())//  hasAnyRole은 "ROLE_" 접두사를 자동으로 추가해줌 하지만 Authority는 "ROLE_USER"로 설정해야했음 이것떄문에 회원가입할떄 권한이 안넘어갔음
                                     .anyRequest().permitAll();
 
 

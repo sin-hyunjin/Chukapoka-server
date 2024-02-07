@@ -18,6 +18,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // CustomUser에서 email찾기
     Optional<User> findByEmail(String email);
 
+    Optional<User> findByEmailAndEmailType(String email, String emailType);
+
     @Override
     Optional<User> findById(Long aLong);
 

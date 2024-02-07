@@ -1,5 +1,6 @@
 package com.chukapoka.server.common.entity;
 
+import com.chukapoka.server.common.dto.TokenResponseDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -21,10 +22,11 @@ public class Token {
     private String key;
 
     @Column(name = "at_value")
-    private String atValue;
+    private String atValue; // access token
 
     @Column(name = "rt_value")
-    private String rtValue;
+    private String rtValue; // refresh token
+    // TODO: 현진 access token, refresh token 만료시간 컬럼 추가
     @Builder
     public Token(String key, String atValue, String rtValue) {
         this.key = key;
@@ -36,6 +38,10 @@ public class Token {
         this.atValue = accessToken;
         this.rtValue = refreshToken;
         return this;
+    }
+
+    public TokenResponseDto toResponseDto(){
+        return new TokenResponseDto(this.atValue);
     }
 
 
