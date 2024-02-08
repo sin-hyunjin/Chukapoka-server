@@ -51,7 +51,7 @@ public class AuthNumberService {
     }
 
     // 실제 메일 전송
-    public AuthNumberResponseDto sendEmail(String email) throws MessagingException, UnsupportedEncodingException {
+    public AuthNumberResponseDto authNumber(String email) throws MessagingException, UnsupportedEncodingException {
         String authNum = createCode();
         LocalDateTime createdAt = LocalDateTime.now();
         LocalDateTime expiredAt = createdAt.plusMinutes(5); // 유효시간은 5분
@@ -74,15 +74,7 @@ public class AuthNumberService {
 
     // 이메일 폼
     private String buildEmailContent(String authNum) {
-        return "<div style='margin:20px;'>"
-                + "<h1> Chukapoka 이메일 인증번호 입니다.</h1><br>"
-                + "<p>아래 인증번호를 입력해주세요<p><br>"
-                + "<div align='center' style='border:1px solid black; font-family:verdana';>"
-                + "<h3 style='color:blue;'>회원가입 이메일 인증번호입니다.</h3>"
-                + "<div style='font-size:130%'>"
-                + "CODE : <strong>"
-                + authNum
-                + "</strong><div><br/> "
-                + "</div>";
+        return "<div style='margin:20px;'> <h1> Chukapoka 이메일 인증번호 입니다.</h1><br><p>아래 인증번호를 입력해주세요<p><br><div align='center' style='border:1px solid black; font-family:verdana';><h3 style='color:blue;'>회원가입 이메일 인증번호입니다.</h3><div style='font-size:130%'>CODE : <strong>" + authNum + "</strong><div><br/> </div>";
     }
+    
 }

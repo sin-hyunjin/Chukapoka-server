@@ -42,3 +42,15 @@
   - SecurityConfig: 스프링 시큐리티에 필요한 설정
   - SecurityUtil: SecurityContext에서 전역으로 유저 정보를 제공하는 유틸 클래스
   - CorsConfig:  서로 다른 Server 환경에서 자원을 공유에 필요한 설정
+
+## 인가 표현식 
+
+![API.png](screenshots%2FAPI.png)
+
+hasRole과 hasAuthority 차이
+
+hasRole은 괄호안에 USER라 넣으면 ROLEUSER로 변환
+[그러니까 ROLE PREFIX를 넣지 않아야한다]
+hasAuthority는 ROLE_USER로 PREFIX를 넣어야한다.
+
+hasAnyRole,Authority는 여러 권한을 넣는 것.

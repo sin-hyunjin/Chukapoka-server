@@ -2,8 +2,11 @@ package com.chukapoka.server.user.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.userdetails.UserDetails;
+
 
 import java.time.LocalDateTime;
+
 
 @Entity
 @Data
@@ -18,7 +21,7 @@ public class User {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Column(name = "userId")
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -33,13 +36,18 @@ public class User {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    @Transient
+    private String authorities; // 권한 ROLE_USER || ROLE_ADMIN
+
     @Builder
-    public User(String email, String password, String emailType) {
+    public User(String email, String password, String emailType,String authorities)  {
         this.email = email;
         this.password = password;
         this.emailType = emailType;
+        this.authorities = authorities;
         this.updatedAt = LocalDateTime.now();
     }
+
 
 
 }

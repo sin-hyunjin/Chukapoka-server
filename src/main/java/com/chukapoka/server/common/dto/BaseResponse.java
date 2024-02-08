@@ -2,6 +2,7 @@ package com.chukapoka.server.common.dto;
 
 
 import com.chukapoka.server.common.enums.ResultType;
+
 import lombok.Data;
 
 @Data
