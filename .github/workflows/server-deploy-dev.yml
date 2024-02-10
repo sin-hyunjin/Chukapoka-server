@@ -16,7 +16,7 @@ jobs:
         with:
           distribution: 'temurin'
 #          java-version: '17'
-          java-version: '118'
+          java-version: '11'
           # path: "${{ github.workspace }}/server"
 
       - name: Grant execute permission for gradlew
