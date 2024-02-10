@@ -15,9 +15,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-#          java-version: '17'
           java-version: '21'
-          # path: "${{ github.workspace }}/server"
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
@@ -28,28 +26,32 @@ jobs:
         shell: bash
 
       - name: Get current time
-        uses: 1466587594/get-current-time@v2
+        uses: josStorer/get-current-time@v2
         id: current-time
         with:
           format: YYYY-MM-DDTHH-mm-ss
           utcOffset: "+09:00"
 
-      - name: Generate deployment package # (1)
-        run: |
-          mkdir -p server-deploy
-          cp ./build/libs/server-0.0.1-SNAPSHOT.jar server-deploy/application.jar
-          cp ./Procfile server-deploy/Procfile
-          cp -r ./.ebextensions server-deploy/.ebextensions
-          cp -r ./.platform server-deploy/.platform
-          cd server-deploy && zip -r server-deploy.zip .
+#      - name: Generate deployment package # (1)
+#        run: |
+#          mkdir -p server-deploy
+#          cp ./build/libs/server-0.0.1-SNAPSHOT.jar server-deploy/application.jar
+#          cp ./Procfile server-deploy/Procfile
+#          cp -r ./.ebextensions server-deploy/.ebextensions
+#          cp -r ./.platform server-deploy/.platform
+#          cd server-deploy && zip -r server-deploy.zip .
+
+      - name: Set artifact
+        run: echo "artifact=$(ls ./build/libs)" >> $GITHUB_ENV
 
       - name: Deploy to EB # (2)
         uses: einaregilsson/beanstalk-deploy@v21
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ID }}
-          application_name: chukapoka-server-dev
-          environment_name: chukapoka-server-dev
+          application_name: chukapoka-server-test
+          environment_name: chukapoka-server-test
           version_label: github-action-${{steps.current-time.outputs.formattedTime}}
           region: ap-northeast-1  # 도쿄, 2: 서울
-          deployment_package: server-deploy/server-deploy.zip
+#          deployment_package: server-deploy/server-deploy.zip
+          deployment_package: ./build/libs/${{env.artifact}}
