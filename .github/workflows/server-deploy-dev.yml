@@ -4,6 +4,18 @@ on:
       - dev  # push되면 실행될 브랜치를 선택합니다.
 #  workflow_dispatch: # 수동 실행
 #
+
+#본인이 설정한 값을 여기서 채워넣기
+#리전,버킷 이름, CodeDeploy앱 이름, CodeDeploy배포 그룹 이름
+env:
+  AWS_REGION: ap-northeast-1
+  S3_BUCKET_NAME: chukapoka-server-dev-bucket
+  CODE_DEPLOY_APPLICATION_NAME: chukapoka-server-dev-app
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: chukapoka-server-dev-deployment-group
+
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -25,33 +37,27 @@ jobs:
         run: ./gradlew -p . clean build
         shell: bash
 
-      - name: Get current time
-        uses: josStorer/get-current-time@v2
-        id: current-time
+      # (4) AWS인증 (IAM사용자 Access Key, Secret Key활용)
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          format: YYYY-MM-DDTHH-mm-ss
-          utcOffset: "+09:00"
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ID }}
+          aws-region: ${{ env.AWS_REGION }}
+      # (5)빌드 결과물을 S3버킷에 업로드
+      - name: Upload to AWS S3
+        run: |
+          aws deploy push \\
+            --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \\
+            --ignore-hidden-files \\
+            --s3-location s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip \\
+            --source .
 
-#      - name: Generate deployment package # (1)
-#        run: |
-#          mkdir -p server-deploy
-#          cp ./build/libs/server-0.0.1-SNAPSHOT.jar server-deploy/application.jar
-#          cp ./Procfile server-deploy/Procfile
-#          cp -r ./.ebextensions server-deploy/.ebextensions
-#          cp -r ./.platform server-deploy/.platform
-#          cd server-deploy && zip -r server-deploy.zip .
-
-#      - name: Set artifact
-#        run: echo "artifact=$(ls ./build/libs)" >> $GITHUB_ENV
-
-      - name: Deploy to EB # (2)
-        uses: einaregilsson/beanstalk-deploy@v21
-        with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ID }}
-          application_name: chukapoka-server-test
-          environment_name: chukapoka-server-test
-          version_label: github-action-${{steps.current-time.outputs.formattedTime}}
-          region: ap-northeast-1  # 도쿄, 2: 서울
-#          deployment_package: server-deploy/server-deploy.zip
-          deployment_package: ./build/libs/server-0.0.1-SNAPSHOT.jar
+      # (6) S3버킷에 있는 파일을 대상으로 CodeDeploy실행
+      - name: Deploy to AWS EC2 from S3
+        run: |
+          aws deploy create-deployment \\
+            --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \\
+            --deployment-config-name CodeDeployDefault.AllAtOnce \\
+            --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \\
+            --s3-location bucket=$S3_BUCKET_NAME,key=$GITHUB_SHA.zip,bundleType=zip
