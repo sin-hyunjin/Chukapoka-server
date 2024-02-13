@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-PROJECT_ROOT="/home/ubuntu/server"
+PROJECT_ROOT="/home/ubuntu/app"
 rm $PROJECT_ROOT/build/libs/*-plain.jar
 JAR_FILE="$PROJECT_ROOT/spring-webapp.jar"
 
