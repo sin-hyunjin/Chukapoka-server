@@ -48,8 +48,8 @@ logging:
       hibernate:
         SQL: debug
         type.descriptor.sql: trace
-      springframework: 
-        web: debug
+      springframework: debug
+        # web: debug
 # JWT Secret ??
 jwt:
   secret: ${AUTH_JWT_SECRET}
