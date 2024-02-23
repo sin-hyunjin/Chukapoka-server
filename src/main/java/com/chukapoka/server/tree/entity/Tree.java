@@ -1,11 +1,12 @@
 package com.chukapoka.server.tree.entity;
 
+import com.chukapoka.server.common.enums.TreeType;
+
 import jakarta.persistence.*;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 
@@ -18,15 +19,16 @@ public class Tree {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "treeId")
-    private Long id;
+    private Long treeId;
 
     /** 트리제목 */
     @Column(name = "title", nullable = false)
     private String title;
 
     /** 내트리 || 미부여 트리 */
+    @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
-    private String type;
+    private TreeType type;
 
     /** 트리 링크를 특정하기 위한 id*/
     @Column(name = "linkId", nullable = false, unique = true, length = 200)
@@ -53,13 +55,17 @@ public class Tree {
     private String treeBottomColor;
 
     /** userId가 값임 */
-    @Column(name = "updatedBy", nullable = false)
-    private String updatedBy;
+    @Column(name = "updatedBy")
+    private Long updatedBy;
+
     /** 생성 시간 */
     @Column(name = "updatedAt", nullable = false)
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 
-
-
+    @PrePersist
+    public void updatedAt() {
+        this.updatedAt = LocalDateTime.now();
+    }
 
 }
