@@ -26,9 +26,8 @@ public class Tree {
     private String title;
 
     /** 내트리 || 미부여 트리 */
-    @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
-    private TreeType type;
+    private String type;
 
     /** 트리 링크를 특정하기 위한 id*/
     @Column(name = "linkId", nullable = false, unique = true, length = 200)
@@ -37,6 +36,15 @@ public class Tree {
     /** 타인에게 트리를 전달할 때 트리를 특정하기 위한 id */
     @Column(name = "sendId", unique = true, length = 200)
     private String sendId;
+
+    /** userId가 값임 */
+    @Column(name = "updatedBy")
+    private Long updatedBy;
+
+    /** 생성 시간 */
+    @Column(name = "updatedAt", nullable = false)
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
 
     /** 트라 관련 색상은 String -> enum type으로 상수로 바꿔야 관리가 더 편할것같음 */
     @Column(name = "treeBgColor", nullable = true)
@@ -54,14 +62,7 @@ public class Tree {
     @Column(name = "treeBottomColor", nullable = true)
     private String treeBottomColor;
 
-    /** userId가 값임 */
-    @Column(name = "updatedBy")
-    private Long updatedBy;
 
-    /** 생성 시간 */
-    @Column(name = "updatedAt", nullable = false)
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
 
     @PrePersist
     public void updatedAt() {

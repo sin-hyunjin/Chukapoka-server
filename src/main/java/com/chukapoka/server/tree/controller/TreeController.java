@@ -2,8 +2,11 @@ package com.chukapoka.server.tree.controller;
 
 import com.chukapoka.server.common.dto.BaseResponse;
 import com.chukapoka.server.common.enums.ResultType;
+import com.chukapoka.server.tree.dto.TreeListResponseDto;
+import com.chukapoka.server.tree.dto.TreeRequestDto;
 import com.chukapoka.server.tree.entity.Tree;
 import com.chukapoka.server.tree.service.TreeService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,21 +23,22 @@ public class TreeController {
 
     /**트리 생성 */
     @PostMapping
-    public BaseResponse<Tree>createTree(@RequestBody Tree tree) {
-        Tree response = treeService.createTree(tree);
-        return new BaseResponse<>(ResultType.SUCCESS, response);
+    public BaseResponse<Tree>createTree(@Valid @RequestBody TreeRequestDto treeRequestDto) {
+        Tree responseDto = treeService.createTree(treeRequestDto);
+        return new BaseResponse<>(ResultType.SUCCESS, responseDto);
     }
 
     /** 트리리스트 목록 */
     @GetMapping
-    private BaseResponse<List<Tree>> treeList(@RequestParam("id") Long userId) {
-        List<Tree> response = treeService.treeList(userId);
-        return new BaseResponse<>(ResultType.SUCCESS, response);
+    public BaseResponse<TreeListResponseDto> treeList() {
+        TreeListResponseDto responseDto = treeService.treeList();
+        return new BaseResponse<>(ResultType.SUCCESS, responseDto);
     }
 
+
     /** 트리 삭제 */
-    @DeleteMapping
-    private BaseResponse<Void> deleteTree(@RequestParam("treeId") Long treeId) {
+    @DeleteMapping("/{treeId}")
+    public BaseResponse<Void> deleteTree(@PathVariable("treeId") Long treeId) {
         treeService.deleteTree(treeId);
         return new BaseResponse<>(ResultType.SUCCESS, null);
     }
