@@ -1,11 +1,12 @@
 package com.chukapoka.server.tree.entity;
 
-import com.chukapoka.server.common.enums.TreeType;
 
 import jakarta.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@DynamicUpdate // 데이터의 변경사항이 있는 것만 수정
 @Table(name = "tb_tree")
 public class Tree {
     @Id
@@ -22,11 +24,11 @@ public class Tree {
     private Long treeId;
 
     /** 트리제목 */
-    @Column(name = "title", nullable = false)
+    @Column(name = "title")
     private String title;
 
     /** 내트리 || 미부여 트리 */
-    @Column(name = "type", nullable = false)
+    @Column(name = "type")
     private String type;
 
     /** 트리 링크를 특정하기 위한 id*/

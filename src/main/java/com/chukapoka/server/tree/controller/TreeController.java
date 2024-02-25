@@ -4,6 +4,7 @@ import com.chukapoka.server.common.dto.BaseResponse;
 import com.chukapoka.server.common.enums.ResultType;
 import com.chukapoka.server.tree.dto.TreeListResponseDto;
 import com.chukapoka.server.tree.dto.TreeRequestDto;
+import com.chukapoka.server.tree.dto.TreeModifyRequestDto;
 import com.chukapoka.server.tree.entity.Tree;
 import com.chukapoka.server.tree.service.TreeService;
 import jakarta.validation.Valid;
@@ -11,7 +12,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+
 
 @RestController
 @AllArgsConstructor
@@ -35,6 +36,14 @@ public class TreeController {
         return new BaseResponse<>(ResultType.SUCCESS, responseDto);
     }
 
+    /** 트리 수정 */
+    @PutMapping("/{treeId}")
+    public BaseResponse<Tree> treeModify(@PathVariable("treeId") Long treeId,
+                                         @RequestBody TreeModifyRequestDto treeModifyDto) {
+        System.out.println("treeModifyDto = " + treeModifyDto);
+        Tree responseDto = treeService.treeModify(treeId, treeModifyDto);
+        return new BaseResponse<>(ResultType.SUCCESS, responseDto);
+    }
 
     /** 트리 삭제 */
     @DeleteMapping("/{treeId}")
@@ -42,5 +51,6 @@ public class TreeController {
         treeService.deleteTree(treeId);
         return new BaseResponse<>(ResultType.SUCCESS, null);
     }
+
 }
 

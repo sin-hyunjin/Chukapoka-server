@@ -16,7 +16,7 @@ import java.util.List;
 public class TreeListResponseDto {
 
     /** 트리 리스트 목록 */
-    private List<TreeList> trees;
+    private List<TreeList> treeList;
 }
 
 
