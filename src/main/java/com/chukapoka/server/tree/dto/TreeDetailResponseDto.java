@@ -1,5 +1,7 @@
 package com.chukapoka.server.tree.dto;
 
+
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,17 +11,23 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TreeList {
+public class TreeDetailResponseDto {
 
-    /** 트리 리스트정보 */
+    /** 트리상세 정보 */
     private Long treeId;
     private String title;
     private String type; // MINE or NOT_YEN_SEND
-    private String linkId;
-    private String sendId;
+    private String treeBgColor;
+    private String groundColor;
+    private String treeTopColor;
+    private String treeItemColor;
+    private String treeBottomColor;
+
+    /** treeItem 목록 필요 */
+
     private Long updatedBy;
     private LocalDateTime updatedAt;
 
-    /** 트리색상 부분 추가 가능 */
+
 
 }

@@ -4,6 +4,8 @@ import lombok.Data;
 
 @Data
 public class TreeModifyRequestDto {
+
+    /** 트리에 관련된 것만 수정할것인지 ?*/
     private String title;
     private String type;
     private String treeBgColor;
@@ -11,4 +13,5 @@ public class TreeModifyRequestDto {
     private String treeTopColor;
     private String treeItemColor;
     private String treeBottomColor;
+    
 }

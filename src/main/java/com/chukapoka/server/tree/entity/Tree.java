@@ -39,15 +39,6 @@ public class Tree {
     @Column(name = "sendId", unique = true, length = 200)
     private String sendId;
 
-    /** userId가 값임 */
-    @Column(name = "updatedBy")
-    private Long updatedBy;
-
-    /** 생성 시간 */
-    @Column(name = "updatedAt", nullable = false)
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
-
     /** 트라 관련 색상은 String -> enum type으로 상수로 바꿔야 관리가 더 편할것같음 */
     @Column(name = "treeBgColor", nullable = true)
     private String treeBgColor;
@@ -64,11 +55,21 @@ public class Tree {
     @Column(name = "treeBottomColor", nullable = true)
     private String treeBottomColor;
 
+    /** userId가 값임 */
+    @Column(name = "updatedBy")
+    private Long updatedBy;
+
+    /** 생성 시간 */
+    @Column(name = "updatedAt", nullable = false)
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+
 
 
     @PrePersist
     public void updatedAt() {
         this.updatedAt = LocalDateTime.now();
     }
+
 
 }

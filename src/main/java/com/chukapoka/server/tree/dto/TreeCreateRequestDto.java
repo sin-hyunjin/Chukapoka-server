@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class TreeRequestDto {
+public class TreeCreateRequestDto {
     @NotBlank(message = "title is null")
     private String title;
     @NotNull(message = "treeType is null")
@@ -17,7 +17,7 @@ public class TreeRequestDto {
     private String linkId;
     @NotBlank(message = "sendId is null")
     private String sendId;
-    private Long updatedBy;  // 클라이언트에서는 입력받을 필요없음
+    private Long updatedBy;  // 클라이언트에서는 입력받을 필요없음 ( TreeServicelmpl.createTree 에서 처리 )
     private String treeBgColor;
     private String groundColor;
     private String treeTopColor;

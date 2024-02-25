@@ -58,6 +58,8 @@ dependencies {
 	// enable production
 	implementation ("org.springframework.boot:spring-boot-starter-actuator")
 
+	// modelmapper
+	implementation 'org.modelmapper:modelmapper:2.4.4'
 }
 
 
