@@ -34,6 +34,7 @@ public class TreeServiceImpl implements TreeService{
         // -> 서버에서 linkId, sendId를 만들어줄꺼라면 build가 좋을꺼같은데...
         BeanUtils.copyProperties(treeRequestDto, tree); // mapper대신 사용할수 있지만 복사할 속성의 수가 적고 속성 이름이 일치하는 경우에 적합
         return treeRepository.save(tree);
+        
     }
 
     /** 사용자 트리 리스트 조회(리스트용 모델) */
