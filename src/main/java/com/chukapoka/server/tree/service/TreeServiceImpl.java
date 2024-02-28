@@ -24,7 +24,7 @@ public class TreeServiceImpl implements TreeService{
     /** 트리생성 */
     @Override
     @Transactional
-    public Tree createTree(TreeCreateRequestDto treeRequestDto) {
+    public Long createTree(TreeCreateRequestDto treeRequestDto) {
         Tree tree = new Tree();
         // 클라이언트에서 입력 받을 필요없이 토큰으로 접속후 권한id로 셋팅
         long userId = ((CustomUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
@@ -33,8 +33,10 @@ public class TreeServiceImpl implements TreeService{
         // 질문 : 여기를 build를 사용하는게 좋을지 modelMapper를 사용하는게 좋을지??
         // -> 서버에서 linkId, sendId를 만들어줄꺼라면 build가 좋을꺼같은데...
         BeanUtils.copyProperties(treeRequestDto, tree); // mapper대신 사용할수 있지만 복사할 속성의 수가 적고 속성 이름이 일치하는 경우에 적합
-        return treeRepository.save(tree);
-        
+        Tree saveTree = treeRepository.save(tree);
+
+        return saveTree.getTreeId();
+
     }
 
     /** 사용자 트리 리스트 조회(리스트용 모델) */

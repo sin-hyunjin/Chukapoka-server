@@ -10,6 +10,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Entity
 @Data
@@ -19,13 +20,12 @@ import java.time.LocalDateTime;
 @Table(name = "tb_treeItem")
 public class TreeItem {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "treeItemId")
-    private Long treeItemId;
+    @Column(name = "treeItemId", unique = true, nullable = false)
+    private String treeItemId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "treeId", referencedColumnName = "treeId")
-    private Tree treeId;
+    private Long treeId;
 
     /** 편지 제목 */
     @Column(name = "title")
@@ -34,22 +34,6 @@ public class TreeItem {
     /** 편지 내용*/
     @Column(name = "content")
     private String content;
-
-    /** 트라 관련 색상은 String -> enum type으로 상수로 바꿔야 관리가 더 편할것같음 */
-    @Column(name = "treeBgColor", nullable = true)
-    private String treeBgColor;
-
-    @Column(name = "groundColor", nullable = true)
-    private String groundColor;
-
-    @Column(name = "treeTopColor", nullable = true)
-    private String treeTopColor;
-
-    @Column(name = "treeItemColor", nullable = true)
-    private String treeItemColor;
-
-    @Column(name = "treeBottomColor", nullable = true)
-    private String treeBottomColor;
 
     /** userId가 값임 */
     @Column(name = "updatedBy")
@@ -60,12 +44,15 @@ public class TreeItem {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-
-
-    @PrePersist
-    public void updatedAt() {
+    @PrePersist // JPA에서는 엔티티의 생명주기 중 하나의 이벤트에 대해 하나의 @PrePersist 메서드만을 허용
+    public void prePersist() {
+        this.treeItemId = TreeItemId();
         this.updatedAt = LocalDateTime.now();
     }
 
+    private static final AtomicInteger counter = new AtomicInteger(0);
+    private static String TreeItemId() {
+        return "treeItem" + counter.incrementAndGet();
+    }
 
 }

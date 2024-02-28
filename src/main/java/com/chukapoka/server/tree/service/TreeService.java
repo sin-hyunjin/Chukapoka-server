@@ -9,7 +9,7 @@ import com.chukapoka.server.tree.entity.Tree;
 public interface TreeService {
 
     /** 트리 저장 */
-    Tree createTree(TreeCreateRequestDto treeRequestDto);
+    Long createTree(TreeCreateRequestDto treeRequestDto);
 
     /** 트리리스트 조회(리스트용 모델) */
     TreeListResponseDto treeList();

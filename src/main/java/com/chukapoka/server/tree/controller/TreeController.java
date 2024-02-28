@@ -25,8 +25,8 @@ public class TreeController {
 
     /**트리 생성 */
     @PostMapping
-    public BaseResponse<Tree>createTree(@Valid @RequestBody TreeCreateRequestDto treeRequestDto) {
-        Tree responseDto = treeService.createTree(treeRequestDto);
+    public BaseResponse<Long>createTree(@Valid @RequestBody TreeCreateRequestDto treeRequestDto) {
+        Long responseDto = treeService.createTree(treeRequestDto);
         return new BaseResponse<>(ResultType.SUCCESS, responseDto);
     }
 
