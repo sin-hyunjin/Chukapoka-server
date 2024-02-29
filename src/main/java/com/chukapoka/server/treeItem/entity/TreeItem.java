@@ -48,7 +48,9 @@ public class TreeItem {
 
     @PrePersist // JPA에서는 엔티티의 생명주기 중 하나의 이벤트에 대해 하나의 @PrePersist 메서드만을 허용
     public void prePersist() {
-        this.id = TreeItemId();
+        if (this.id == null) {
+            this.id = TreeItemId();
+        }
     }
     private static final AtomicInteger counter = new AtomicInteger(0);
     private static String TreeItemId() {

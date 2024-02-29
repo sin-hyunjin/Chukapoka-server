@@ -1,6 +1,5 @@
 package com.chukapoka.server.treeItem.dto;
 
-import com.chukapoka.server.tree.entity.Tree;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

@@ -68,7 +68,10 @@ public class Tree {
     @PrePersist
     public void prePersist() {
         this.updatedAt = LocalDateTime.now();
-        this.treeId = TreeId();
+        if(this.treeId == null) {
+            this.treeId = TreeId();
+        }
+
     }
 
     private static final AtomicInteger counter = new AtomicInteger(0);

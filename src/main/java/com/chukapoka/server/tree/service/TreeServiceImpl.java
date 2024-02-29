@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -42,8 +43,17 @@ public class TreeServiceImpl implements TreeService{
     /** 사용자 트리 리스트 조회(리스트용 모델) */
     @Override
     public TreeListResponseDto treeList() {
-        List<TreeList> trees = treeRepository.findAllTrees();
-        return new TreeListResponseDto(trees);
+        // 1. jpa에서 TreeList를 만든다음 @query로 찾아서 가져오는 방법
+
+//        List<TreeList> trees = treeRepository.findAllTrees();
+//        return new TreeListResponseDto(trees);
+
+        //2. modelMapper로 리스트 조회후 맵핑하는방법
+        List<Tree> trees = treeRepository.findAll();
+        List<TreeList> treeLists = trees.stream()
+                .map(tree -> modelMapper.map(tree, TreeList.class))
+                .collect(Collectors.toList());
+        return new TreeListResponseDto(treeLists);
     }
 
     /** 트리 상세 정보 조회 (상세정보 모델) */

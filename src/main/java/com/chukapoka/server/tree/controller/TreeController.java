@@ -6,7 +6,6 @@ import com.chukapoka.server.tree.dto.TreeDetailResponseDto;
 import com.chukapoka.server.tree.dto.TreeListResponseDto;
 import com.chukapoka.server.tree.dto.TreeCreateRequestDto;
 import com.chukapoka.server.tree.dto.TreeModifyRequestDto;
-import com.chukapoka.server.tree.entity.Tree;
 import com.chukapoka.server.tree.service.TreeService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
