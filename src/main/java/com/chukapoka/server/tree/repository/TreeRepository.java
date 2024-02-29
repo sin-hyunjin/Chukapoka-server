@@ -13,10 +13,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface TreeRepository extends JpaRepository<Tree, Long> {
-    Optional<Tree> findById(Long treeId);
+public interface TreeRepository extends JpaRepository<Tree, String> {
+    Optional<Tree> findById(String treeId);
     @Query("SELECT new com.chukapoka.server.tree.dto.TreeList(tree.treeId, tree.title, tree.type, tree.linkId, tree.sendId, tree.updatedBy, tree.updatedAt) FROM Tree tree")
     List<TreeList> findAllTrees();
+
 
 
 }

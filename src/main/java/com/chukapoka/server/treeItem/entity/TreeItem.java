@@ -1,7 +1,6 @@
 package com.chukapoka.server.treeItem.entity;
 
 
-import com.chukapoka.server.tree.entity.Tree;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,11 +20,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class TreeItem {
     @Id
     @Column(name = "treeItemId", unique = true, nullable = false)
-    private String treeItemId;
+    private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "treeId", referencedColumnName = "treeId")
-    private Long treeId;
+    @Column(name = "treeId")
+    private String treeId;
 
     /** 편지 제목 */
     @Column(name = "title")
@@ -34,6 +32,10 @@ public class TreeItem {
     /** 편지 내용*/
     @Column(name = "content")
     private String content;
+
+    /** 트리아이템 색상 */
+    @Column(name = "treeItemColor", nullable = true)
+    private String treeItemColor;
 
     /** userId가 값임 */
     @Column(name = "updatedBy")
@@ -46,10 +48,8 @@ public class TreeItem {
 
     @PrePersist // JPA에서는 엔티티의 생명주기 중 하나의 이벤트에 대해 하나의 @PrePersist 메서드만을 허용
     public void prePersist() {
-        this.treeItemId = TreeItemId();
-        this.updatedAt = LocalDateTime.now();
+        this.id = TreeItemId();
     }
-
     private static final AtomicInteger counter = new AtomicInteger(0);
     private static String TreeItemId() {
         return "treeItem" + counter.incrementAndGet();

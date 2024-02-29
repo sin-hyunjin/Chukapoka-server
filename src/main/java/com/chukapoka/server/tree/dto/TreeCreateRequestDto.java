@@ -10,7 +10,7 @@ import lombok.Data;
 public class TreeCreateRequestDto {
     @NotBlank(message = "title is null")
     private String title;
-    @NotNull(message = "treeType is null")
+    @NotBlank(message = "treeType is null")
     @ValidEnum(enumClass = TreeType.class, message = "TreeType must be MINE or NOT_YET_SEND")
     private String type;
     @NotBlank(message = "linkId is null")

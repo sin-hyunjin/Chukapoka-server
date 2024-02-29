@@ -4,39 +4,39 @@ import com.chukapoka.server.common.dto.CustomUser;
 import com.chukapoka.server.tree.dto.*;
 import com.chukapoka.server.tree.entity.Tree;
 import com.chukapoka.server.tree.repository.TreeRepository;
+import com.chukapoka.server.treeItem.entity.TreeItem;
+import com.chukapoka.server.treeItem.repository.TreeItemRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+
 @Service
 @AllArgsConstructor
 public class TreeServiceImpl implements TreeService{
 
     private final TreeRepository treeRepository;
+    private final TreeItemRepository treeItemRepository;
     private final ModelMapper modelMapper;
 
     /** 트리생성 */
     @Override
     @Transactional
-    public Long createTree(TreeCreateRequestDto treeRequestDto) {
-        Tree tree = new Tree();
+    public TreeDetailResponseDto createTree(TreeCreateRequestDto treeRequestDto) {
         // 클라이언트에서 입력 받을 필요없이 토큰으로 접속후 권한id로 셋팅
         long userId = ((CustomUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
+        Tree tree = new Tree();
         treeRequestDto.setUpdatedBy(userId);
 
-        // 질문 : 여기를 build를 사용하는게 좋을지 modelMapper를 사용하는게 좋을지??
-        // -> 서버에서 linkId, sendId를 만들어줄꺼라면 build가 좋을꺼같은데...
-        BeanUtils.copyProperties(treeRequestDto, tree); // mapper대신 사용할수 있지만 복사할 속성의 수가 적고 속성 이름이 일치하는 경우에 적합
-        Tree saveTree = treeRepository.save(tree);
-
-        return saveTree.getTreeId();
-
+//        BeanUtils.copyProperties(treeRequestDto, tree); // mapper대신 사용할수 있지만 복사할 속성의 수가 적고 속성 이름이 일치하는 경우에 적합
+        modelMapper.map(treeRequestDto, tree);
+        treeRepository.save(tree);
+        return modelMapper.map(tree, TreeDetailResponseDto.class);
     }
 
     /** 사용자 트리 리스트 조회(리스트용 모델) */
@@ -48,45 +48,39 @@ public class TreeServiceImpl implements TreeService{
 
     /** 트리 상세 정보 조회 (상세정보 모델) */
     @Override
-    public TreeDetailResponseDto treeDetail(Long treeId) {
+    public TreeDetailResponseDto treeDetail(String treeId) {
         Tree tree = findTreeByIdOrThrow(treeId);
-        // tree entity를 TreeDetailResponseDto로 매핑
-        return modelMapper.map(tree, TreeDetailResponseDto.class);
+        // 트리에 속한 모든 TreeItem을 가져오기
+        List<TreeItem> treeItems = treeItemRepository.findByTreeId(tree.getTreeId());
+        TreeDetailResponseDto treeDetailResponseDto = modelMapper.map(tree, TreeDetailResponseDto.class);
+        treeDetailResponseDto.setTreeItem(treeItems);
+        return treeDetailResponseDto;
+
     }
 
     /** 트리수정 */
     @Override
-    public Tree treeModify(Long treeId, TreeModifyRequestDto treeModifyDto) {
+    @Transactional
+    public TreeDetailResponseDto treeModify(String treeId, TreeModifyRequestDto treeModifyDto) {
         // 트리 아이디로 트리를 찾음
         Tree tree = findTreeByIdOrThrow(treeId);
-        return treeUpdate(tree, treeModifyDto);
+        modelMapper.map(treeModifyDto, tree);
+        // 변경된 트리 저장
+        treeRepository.save(tree);
+        // 변경된 트리 상세 정보 반환
+        return modelMapper.map(tree, TreeDetailResponseDto.class);
     }
 
     /** 트리 삭제 */
     @Override
     @Transactional
-    public void treeDelete(Long treeId) {
+    public void treeDelete(String treeId) {
         findTreeByIdOrThrow(treeId);
         treeRepository.deleteById(treeId);
     }
 
-
-
-    /** 트리필드 정보 업데이트 메서드*/
-    @Transactional // 데이터 변경감지
-    private Tree treeUpdate(Tree tree, TreeModifyRequestDto treeModifyDto) {
-        tree.setTitle(treeModifyDto.getTitle());
-        tree.setType(treeModifyDto.getType());
-        tree.setTreeBgColor(treeModifyDto.getTreeBgColor());
-        tree.setGroundColor(treeModifyDto.getGroundColor());
-        tree.setTreeTopColor(treeModifyDto.getTreeTopColor());
-        tree.setTreeItemColor(treeModifyDto.getTreeItemColor());
-        tree.setTreeBottomColor(treeModifyDto.getTreeBottomColor());
-        return treeRepository.save(tree);
-    }
-
     /** treeId Exception 처리 메서드 */
-    private Tree findTreeByIdOrThrow(Long treeId) {
+    private Tree findTreeByIdOrThrow(String treeId) {
         return treeRepository.findById(treeId)
                 .orElseThrow(() -> new EntityNotFoundException("등록되지 않은 " + treeId + "입니다."));
     }

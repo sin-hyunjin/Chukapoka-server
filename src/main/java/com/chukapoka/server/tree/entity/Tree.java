@@ -1,27 +1,28 @@
 package com.chukapoka.server.tree.entity;
 
-
 import jakarta.persistence.*;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @DynamicUpdate // 데이터의 변경사항이 있는 것만 수정
+@Builder
 @Table(name = "tb_tree")
 public class Tree {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "treeId")
-    private Long treeId;
+    @Column(name = "treeId", unique = true, nullable = false)
+    private String treeId;
 
     /** 트리제목 */
     @Column(name = "title")
@@ -64,12 +65,15 @@ public class Tree {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-
-
     @PrePersist
-    public void updatedAt() {
+    public void prePersist() {
         this.updatedAt = LocalDateTime.now();
+        this.treeId = TreeId();
     }
 
+    private static final AtomicInteger counter = new AtomicInteger(0);
+    private static String TreeId() {
+        return "treeId" + counter.incrementAndGet();
+    }
 
 }

@@ -25,8 +25,8 @@ public class TreeController {
 
     /**트리 생성 */
     @PostMapping
-    public BaseResponse<Long>createTree(@Valid @RequestBody TreeCreateRequestDto treeRequestDto) {
-        Long responseDto = treeService.createTree(treeRequestDto);
+    public BaseResponse<TreeDetailResponseDto>createTree(@Valid @RequestBody TreeCreateRequestDto treeRequestDto) {
+        TreeDetailResponseDto responseDto = treeService.createTree(treeRequestDto);
         return new BaseResponse<>(ResultType.SUCCESS, responseDto);
     }
 
@@ -39,23 +39,23 @@ public class TreeController {
 
     /** 트리상세 정보 */
     @GetMapping("/{treeId}")
-    private BaseResponse<TreeDetailResponseDto> treeDetail(@PathVariable("treeId") Long treeId) {
+    private BaseResponse<TreeDetailResponseDto> treeDetail(@PathVariable("treeId") String treeId) {
         TreeDetailResponseDto responseDto = treeService.treeDetail(treeId);
         return new BaseResponse<>(ResultType.SUCCESS, responseDto);
     }
 
     /** 트리 수정 */
     @PutMapping("/{treeId}")
-    public BaseResponse<Tree> treeModify(@PathVariable("treeId") Long treeId,
-                                         @RequestBody TreeModifyRequestDto treeModifyDto) {
-        Tree responseDto = treeService.treeModify(treeId, treeModifyDto);
+    public BaseResponse<TreeDetailResponseDto> treeModify(@PathVariable("treeId") String treeId,
+                                         @Valid @RequestBody TreeModifyRequestDto treeModifyDto) {
+        TreeDetailResponseDto responseDto = treeService.treeModify(treeId, treeModifyDto);
         return new BaseResponse<>(ResultType.SUCCESS, responseDto);
     }
 
 
     /** 트리 삭제 */
     @DeleteMapping("/{treeId}")
-    public BaseResponse<Void> treeDelete(@PathVariable("treeId") Long treeId) {
+    public BaseResponse<Void> treeDelete(@PathVariable("treeId") String treeId) {
         treeService.treeDelete(treeId);
         return new BaseResponse<>(ResultType.SUCCESS, null);
     }
