@@ -16,7 +16,7 @@ public class AppConfig {
         /** 연결 전략 : 같은 타입의 필드명이 같은 경우만 동작 */
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE).setSkipNullEnabled(true).setFieldMatchingEnabled(true)
                 .setAmbiguityIgnored(true) // id속성을 매핑에서 제외
-                .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE);;
+                .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE);
         return modelMapper;
     }
 }
