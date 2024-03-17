@@ -21,7 +21,7 @@ public class CustomUserDetails implements UserDetails, OAuth2User {
     private final User user;
     private Map<String, Object> attributes;
 
-    /**일반 로그인 */
+    /** 일반 로그인 */
     public CustomUserDetails(User user) {
         this.user = user;
     }
@@ -38,6 +38,10 @@ public class CustomUserDetails implements UserDetails, OAuth2User {
             return Collections.emptyList(); // user가 null인 경우 빈 권한 목록 반환
         }
         return Collections.singleton(new SimpleGrantedAuthority(user.getAuthorities()));
+    }
+
+    public String getEmail() {
+        return user.getEmail();
     }
 
     public Long getUserId() {

@@ -31,25 +31,17 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        OAuth2User result;
         // 기본 OAuth2UserService 객체 생성
         OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService = new DefaultOAuth2UserService();
-
         // OAuth2UserService를 사용하여 OAuth2User 정보를 가져온다.
         OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest);
-        System.out.println("oAuth2User = " + oAuth2User);
-
         // 클라이언트 등록 ID(google, naver, kakao)와 사용자 이름 속성을 가져온다.
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         String userNameAttributeName = userRequest.getClientRegistration()
                 .getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
-        System.out.println("registrationId = " + registrationId);
-        System.out.println("userNameAttributeName = " + userNameAttributeName);
-
         // OAuth2UserService를 사용하여 가져온 OAuth2User 정보로 OAuth2Attribute 객체를 만든다.
         OAuth2Attribute oAuth2Attribute =
                 OAuth2Attribute.of(registrationId, userNameAttributeName, oAuth2User.getAttributes());
-
         System.out.println("oAuth2Attribute = " + oAuth2Attribute);
         // OAuth2Attribute의 속성값들을 Map으로 반환 받는다.
         Map<String, Object> memberAttribute = oAuth2Attribute.convertToMap();

@@ -1,21 +1,14 @@
 package com.chukapoka.server.common.service;
 
 import com.chukapoka.server.common.dto.CustomUserDetails;
-import com.chukapoka.server.common.enums.Authority;
 import com.chukapoka.server.user.entity.User;
 import com.chukapoka.server.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.Collection;
-import java.util.Collections;
-
 
 @Service
 @RequiredArgsConstructor
