@@ -100,7 +100,6 @@ public class JwtTokenProvider {
     /**
      * JWT 토큰에서 사용자 정보를 추출하여 인증 객체를 반환하는 메서드
      */
-
     public Authentication getAuthentication(String token) {
         Claims claims = parseClaims(token);
 
