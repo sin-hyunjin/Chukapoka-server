@@ -1,6 +1,6 @@
 package com.chukapoka.server.tree.service;
 
-import com.chukapoka.server.common.dto.CustomUser;
+import com.chukapoka.server.common.dto.CustomUserDetails;
 import com.chukapoka.server.tree.dto.*;
 import com.chukapoka.server.tree.entity.Tree;
 import com.chukapoka.server.tree.repository.TreeRepository;
@@ -30,7 +30,7 @@ public class TreeServiceImpl implements TreeService{
     @Transactional
     public TreeDetailResponseDto createTree(TreeCreateRequestDto treeRequestDto) {
         // 클라이언트에서 입력 받을 필요없이 토큰으로 접속후 권한id로 셋팅
-        long userId = ((CustomUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
+        long userId = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
         Tree tree = new Tree();
         treeRequestDto.setUpdatedBy(userId);
 

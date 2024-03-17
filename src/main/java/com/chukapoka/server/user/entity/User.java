@@ -36,7 +36,7 @@ public class User {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    @Transient
+    @Column
     private String authorities; // 권한 ROLE_USER || ROLE_ADMIN
 
     @Builder

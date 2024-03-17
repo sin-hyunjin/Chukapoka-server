@@ -1,6 +1,6 @@
 package com.chukapoka.server.common.service;
 
-import com.chukapoka.server.common.dto.CustomUser;
+import com.chukapoka.server.common.dto.CustomUserDetails;
 import com.chukapoka.server.common.enums.Authority;
 import com.chukapoka.server.user.entity.User;
 import com.chukapoka.server.user.repository.UserRepository;
@@ -32,7 +32,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     private UserDetails createUserDetails(User user) {
-        return new CustomUser(user.getId(), user.getPassword(), getAuthorities());
+        return new CustomUserDetails(user);
     }
 
     private Collection<? extends GrantedAuthority> getAuthorities() {

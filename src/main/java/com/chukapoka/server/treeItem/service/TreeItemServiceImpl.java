@@ -1,6 +1,6 @@
 package com.chukapoka.server.treeItem.service;
 
-import com.chukapoka.server.common.dto.CustomUser;
+import com.chukapoka.server.common.dto.CustomUserDetails;
 import com.chukapoka.server.tree.entity.Tree;
 import com.chukapoka.server.tree.repository.TreeRepository;
 import com.chukapoka.server.treeItem.dto.TreeItemCreateRequestDto;
@@ -33,7 +33,7 @@ public class TreeItemServiceImpl implements TreeItemService{
     @Transactional
     public TreeItemDetailResponseDto createTreeItem(TreeItemCreateRequestDto treeItemCreateRequestDto) {
         String treeId = treeItemCreateRequestDto.getTreeId();
-        long userId = ((CustomUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
+        long userId = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
         return saveTreeItem(treeId, userId, treeItemCreateRequestDto);
     }
 
