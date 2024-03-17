@@ -3,6 +3,7 @@ package com.chukapoka.server.common.authority;
 
 import com.chukapoka.server.common.authority.jwt.JwtAuthenticationFilter;
 import com.chukapoka.server.common.authority.jwt.JwtTokenProvider;
+import com.chukapoka.server.common.authority.oauth2.handler.CustomAuthenticationFailHandler;
 import com.chukapoka.server.common.authority.oauth2.handler.CustomAuthenticationSuccessHandler;
 import com.chukapoka.server.common.authority.oauth2.service.CustomOAuth2UserService;
 import com.chukapoka.server.common.enums.Authority;
@@ -32,6 +33,7 @@ public class SecurityConfig {
     private final TokenRepository tokenRepository;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomAuthenticationSuccessHandler oAuth2LoginSuccessHandler;
+    private final CustomAuthenticationFailHandler oAuthenticationFailHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -62,7 +64,7 @@ public class SecurityConfig {
                                 .userInfoEndpoint(userInfoEndpointConfig ->
                                         userInfoEndpointConfig
                                                 .userService(customOAuth2UserService)) // OAuth2 로그인시 사용자 정보를 가져오는 엔드포인트와 사용자 서비스를 설정
-//                                .failureHandler(oAuth2LoginFailureHandler) // OAuth2 로그인 실패시 처리할 핸들러를 지정
+                                .failureHandler(oAuthenticationFailHandler) // OAuth2 로그인 실패시 처리할 핸들러를 지정
                                 .successHandler(oAuth2LoginSuccessHandler) // OAuth2 로그인 성공시 처리할 핸들러를 지정
                 );
 
