@@ -1,4 +1,4 @@
-package com.chukapoka.server.common.authority;
+package com.chukapoka.server.common.authority.jwt;
 
 import com.chukapoka.server.common.dto.CustomUserDetails;
 import com.chukapoka.server.common.dto.TokenDto;
@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 
 
 import java.security.Key;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -87,8 +88,9 @@ public class JwtTokenProvider {
         return TokenDto.builder()
                 .grantType(BEARER_TYPE)
                 .accessToken(accessToken)
-                .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
                 .refreshToken(refreshToken)
+                .atExpiration(formatDate(accessTokenExpiresIn))
+                .rtExpiration(formatDate(refreshExpiration))
                 .build();
     }
 
@@ -165,6 +167,11 @@ public class JwtTokenProvider {
         Claims claims = parseClaims(token);
         Date expirationDate = claims.getExpiration();
         return expirationDate != null && expirationDate.before(new Date());
+    }
+    /** 토큰 만료기한 날짜 포맷메서드 */
+    private String formatDate(Date date) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        return dateFormat.format(date);
     }
 
 

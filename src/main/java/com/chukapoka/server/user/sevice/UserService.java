@@ -2,7 +2,7 @@ package com.chukapoka.server.user.sevice;
 
 
 
-import com.chukapoka.server.common.authority.JwtTokenProvider;
+import com.chukapoka.server.common.authority.jwt.JwtTokenProvider;
 import com.chukapoka.server.common.dto.CustomUserDetails;
 import com.chukapoka.server.common.dto.TokenDto;
 import com.chukapoka.server.common.dto.TokenResponseDto;
@@ -167,6 +167,8 @@ public class UserService {
                 .key(authentication.getName())
                 .atValue(jwtToken.getAccessToken())
                 .rtValue(jwtToken.getRefreshToken())
+                .atExpiration(jwtToken.getAtExpiration())
+                .rtExpiration(jwtToken.getRtExpiration())
                 .build();
 
         return tokenRepository.save(token).toResponseDto();

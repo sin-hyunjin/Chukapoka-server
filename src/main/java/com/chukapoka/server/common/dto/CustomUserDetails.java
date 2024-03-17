@@ -44,7 +44,7 @@ public class CustomUserDetails implements UserDetails, OAuth2User {
 
     @Override
     public String getUsername() {
-        return user.getEmail();
+        return user.getId().toString();
     }
 
     @Override
@@ -52,6 +52,8 @@ public class CustomUserDetails implements UserDetails, OAuth2User {
         return attributes;
     }
 
+    /** tokenDB 값에서 key값을 바꾸고 싶을떄
+     * Authentication 객체의 값을 UserDetails 에서 가져온다. */
     @Override
     public String getName() {
         return (String) attributes.get("id");
