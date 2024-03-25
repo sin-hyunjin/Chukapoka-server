@@ -21,8 +21,5 @@ public class TreeModifyRequestDto {
     private String treeItemColor;
     private String treeBottomColor;
 
-    public void toEntity(Tree tree , TreeModifyRequestDto treeModifyDto) {
-        tree.setTitle(treeModifyDto.getTitle());
-        tree.setType(treeModifyDto.getType());
-    }
+
 }
