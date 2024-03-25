@@ -3,7 +3,6 @@ package com.chukapoka.server.tree.dto;
 import com.chukapoka.server.tree.entity.Tree;
 import com.chukapoka.server.treeItem.entity.TreeItem;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,9 +10,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@AllArgsConstructor
 public class TreeDetailResponseDto {
 
     /** 트리상세 정보 */
@@ -34,4 +32,36 @@ public class TreeDetailResponseDto {
     private List<TreeItem> treeItem;
 
 
+    /** 트리 생성, 수정 constructor */
+    public TreeDetailResponseDto(Tree tree) {
+        this.treeId = tree.getTreeId();
+        this.title = tree.getTitle();
+        this.type = tree.getType();
+        this.linkId = tree.getLinkId();
+        this.sendId = tree.getSendId();
+        this.treeBgColor = tree.getTreeBgColor();
+        this.groundColor = tree.getGroundColor();
+        this.treeTopColor = tree.getTreeTopColor();
+        this.treeItemColor = tree.getTreeItemColor();
+        this.treeBottomColor = tree.getTreeBottomColor();
+        this.updatedBy = tree.getUpdatedBy();
+        this.updatedAt = tree.getUpdatedAt();
+    }
+
+    /** 트리 상세정보 constructor */
+    public TreeDetailResponseDto(Tree tree,  List<TreeItem> treeItem) {
+        this.treeId = tree.getTreeId();
+        this.title = tree.getTitle();
+        this.type = tree.getType();
+        this.linkId = tree.getLinkId();
+        this.sendId = tree.getSendId();
+        this.treeBgColor = tree.getTreeBgColor();
+        this.groundColor = tree.getGroundColor();
+        this.treeTopColor = tree.getTreeTopColor();
+        this.treeItemColor = tree.getTreeItemColor();
+        this.treeBottomColor = tree.getTreeBottomColor();
+        this.updatedBy = tree.getUpdatedBy();
+        this.updatedAt = tree.getUpdatedAt();
+        this.treeItem = treeItem;
+    }
 }

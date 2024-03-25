@@ -29,25 +29,16 @@ public class TreeServiceImpl implements TreeService{
     @Transactional
     public TreeDetailResponseDto createTree(TreeCreateRequestDto treeRequestDto, long userId) {
         // 클라이언트에서 입력 받을 필요없이 토큰으로 접속후 권한id로 셋팅
-        Tree tree = new Tree();
-        treeRequestDto.setUpdatedBy(userId);
-
-//        BeanUtils.copyProperties(treeRequestDto, tree); // mapper대신 사용할수 있지만 복사할 속성의 수가 적고 속성 이름이 일치하는 경우에 적합
-        modelMapper.map(treeRequestDto, tree);
+        Tree tree = treeRequestDto.toEntity(treeRequestDto, userId);
         treeRepository.save(tree);
-        return modelMapper.map(tree, TreeDetailResponseDto.class);
+        return new TreeDetailResponseDto(tree);
     }
 
     /** 사용자 트리 리스트 조회(리스트용 모델) */
     @Override
-    public TreeListResponseDto treeList(Long updatedBy) {
-        // 1. jpa에서 TreeList를 만든다음 @query로 찾아서 가져오는 방법
-
-//        List<TreeList> trees = treeRepository.findAllTrees();
-//        return new TreeListResponseDto(trees);
-        //2. modelMapper로 리스트 조회후 맵핑하는방법
-        List<Tree> trees = treeRepository.findAllByUpdatedBy(updatedBy);
-
+    public TreeListResponseDto treeList(long userId) {
+        // modelMapper로 리스트 조회후 맵핑하는방법
+        List<Tree> trees = treeRepository.findAllByUpdatedBy(userId);
         List<TreeList> treeLists = trees.stream()
                 .map(tree -> modelMapper.map(tree, TreeList.class))
                 .collect(Collectors.toList());
@@ -56,41 +47,40 @@ public class TreeServiceImpl implements TreeService{
 
     /** 트리 상세 정보 조회 (상세정보 모델) */
     @Override
-    public TreeDetailResponseDto treeDetail(String treeId, Long updatedBy) {
-
-        Tree tree = findTreeByIdOrThrow(treeId, updatedBy);
+    public TreeDetailResponseDto treeDetail(String treeId, long userId) {
+        Tree tree = findTreeByIdOrThrow(treeId, userId);
         // 트리에 속한 모든 TreeItem을 가져오기
         List<TreeItem> treeItems = treeItemRepository.findByTreeId(tree.getTreeId());
-        TreeDetailResponseDto treeDetailResponseDto = modelMapper.map(tree, TreeDetailResponseDto.class);
-        treeDetailResponseDto.setTreeItem(treeItems);
-        return treeDetailResponseDto;
-
+        // 트리와 트리아이템 전체목록 반환
+        return new TreeDetailResponseDto(tree, treeItems);
     }
 
     /** 트리수정 */
     @Override
     @Transactional
-    public TreeDetailResponseDto treeModify(String treeId,Long updatedBy, TreeModifyRequestDto treeModifyDto) {
+    public TreeDetailResponseDto treeModify(String treeId, long userId, TreeModifyRequestDto treeModifyDto) {
         // 트리 아이디로 트리를 찾음
-        Tree tree = findTreeByIdOrThrow(treeId, updatedBy);
-        modelMapper.map(treeModifyDto, tree);
+        Tree tree = findTreeByIdOrThrow(treeId, userId);
+        // TreeModifyRequestDto를 Tree 엔티티로 변환하여 엔티티에 적용
+        treeModifyDto.toEntity(tree);
         // 변경된 트리 저장
         treeRepository.save(tree);
         // 변경된 트리 상세 정보 반환
-        return modelMapper.map(tree, TreeDetailResponseDto.class);
+        return new TreeDetailResponseDto(tree);
     }
 
     /** 트리 삭제 */
     @Override
     @Transactional
-    public void treeDelete(String treeId, Long updatedBy) {
-        Tree tree = findTreeByIdOrThrow(treeId, updatedBy);
+    public void treeDelete(String treeId, long userId) {
+        Tree tree = findTreeByIdOrThrow(treeId, userId);
         treeRepository.delete(tree);
     }
 
+
     /** treeId Exception 처리 메서드 */
-    private Tree findTreeByIdOrThrow(String treeId, Long updatedBy) {
-        return treeRepository.findByTreeIdAndUpdatedBy(treeId, updatedBy)
+    private Tree findTreeByIdOrThrow(String treeId, long userId) {
+        return treeRepository.findByTreeIdAndUpdatedBy(treeId, userId)
                 .orElseThrow(() -> new EntityNotFoundException("등록되지 않은 " + treeId + "입니다."));
     }
 }

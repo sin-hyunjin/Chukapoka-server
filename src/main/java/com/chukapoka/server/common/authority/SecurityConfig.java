@@ -3,9 +3,6 @@ package com.chukapoka.server.common.authority;
 
 import com.chukapoka.server.common.authority.jwt.JwtAuthenticationFilter;
 import com.chukapoka.server.common.authority.jwt.JwtTokenProvider;
-import com.chukapoka.server.common.authority.oauth2.handler.CustomAuthenticationFailHandler;
-import com.chukapoka.server.common.authority.oauth2.handler.CustomAuthenticationSuccessHandler;
-import com.chukapoka.server.common.authority.oauth2.service.CustomOAuth2UserService;
 import com.chukapoka.server.common.enums.Authority;
 import com.chukapoka.server.common.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,9 +28,6 @@ public class SecurityConfig {
      */
     private final JwtTokenProvider jwtTokenProvider;
     private final TokenRepository tokenRepository;
-    private final CustomOAuth2UserService customOAuth2UserService;
-    private final CustomAuthenticationSuccessHandler oAuth2LoginSuccessHandler;
-    private final CustomAuthenticationFailHandler oAuthenticationFailHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -45,29 +39,16 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) // csrf 비활성화 -> cookie를 사용하지 않으면 꺼도 된다. (cookie를 사용할 경우 httpOnly(XSS 방어), sameSite(CSRF 방어)로 방어해야 한다.)
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션관리 정책을 STATELESS(세션이 있으면 쓰지도 않고, 없으면 만들지도 않는다)
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, tokenRepository), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAfter(new JwtAuthenticationFilter(jwtTokenProvider, tokenRepository), UsernamePasswordAuthenticationFilter.class);
 
         /** request 인증, 인가 설정 */
         http
                 .authorizeHttpRequests((authorizeRequests) -> {
                     authorizeRequests
-                            .requestMatchers("/api/user/emailCheck", "/api/user", "/api/user/authNumber", "/api/health").anonymous()
-                            .requestMatchers("/api/user/logout", "api/user/reissue", "/api/tree", "api/tree/**", "api/treeItem", "api/treeItem/**").hasRole(Authority.USER.getAuthority())//  hasAnyRole은 "ROLE_" 접두사를 자동으로 추가해줌 하지만 Authority는 "ROLE_USER"로 설정해야했음 이것떄문에 회원가입할떄 권한이 안넘어갔음
-                            .anyRequest().authenticated(); // 테스트를 위한 모든권한 설정(테스트 후 삭제 예정)
-
+                            .requestMatchers("/api/user/emailCheck", "/api/user", "/api/user/authNumber").anonymous()
+                            .requestMatchers("/api/user/logout", "api/user/reissue", "api/tree/**","api/treeItem/**").hasRole(Authority.USER.getAuthority()//  hasAnyRole은 "ROLE_" 접두사를 자동으로 추가해줌 하지만 Authority는 "ROLE_USER"로 설정해야했음 이것떄문에 회원가입할떄 권한이 안넘어갔음
+                            );
                 });
-
-        /** OAuth2 로그인 설정 */
-        http
-                .oauth2Login((oauth2) ->
-                        oauth2
-                                .userInfoEndpoint(userInfoEndpointConfig ->
-                                        userInfoEndpointConfig
-                                                .userService(customOAuth2UserService)) // OAuth2 로그인시 사용자 정보를 가져오는 엔드포인트와 사용자 서비스를 설정
-                                .failureHandler(oAuthenticationFailHandler) // OAuth2 로그인 실패시 처리할 핸들러를 지정
-                                .successHandler(oAuth2LoginSuccessHandler) // OAuth2 로그인 성공시 처리할 핸들러를 지정
-                );
-
         return http.build();
     }
 

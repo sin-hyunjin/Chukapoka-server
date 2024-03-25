@@ -33,35 +33,36 @@ public class TreeController {
     }
 
     /** 트리리스트 목록 */
-    @GetMapping("/list/{updatedBy}")
-    public BaseResponse<TreeListResponseDto> treeList(@PathVariable("updatedBy") Long updatedBy) {
-        TreeListResponseDto responseDto = treeService.treeList(updatedBy);
+    @GetMapping
+    public BaseResponse<TreeListResponseDto> treeList() {
+        long userId = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
+        TreeListResponseDto responseDto = treeService.treeList(userId);
         return new BaseResponse<>(ResultType.SUCCESS, responseDto);
     }
 
     /** 트리상세 정보 */
-    @GetMapping("/{treeId}/{updatedBy}")
-    private BaseResponse<TreeDetailResponseDto> treeDetail(@PathVariable("treeId") String treeId,
-                                                           @PathVariable("updatedBy") Long updatedBy) {
-        TreeDetailResponseDto responseDto = treeService.treeDetail(treeId, updatedBy);
+    @GetMapping("/{treeId}")
+    private BaseResponse<TreeDetailResponseDto> treeDetail(@PathVariable("treeId") String treeId) {
+        long userId = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
+        TreeDetailResponseDto responseDto = treeService.treeDetail(treeId, userId);
         return new BaseResponse<>(ResultType.SUCCESS, responseDto);
     }
 
     /** 트리 수정 */
-    @PutMapping("/{treeId}/{updatedBy}")
+    @PutMapping("/{treeId}")
     public BaseResponse<TreeDetailResponseDto> treeModify(@PathVariable("treeId") String treeId,
-                                                          @PathVariable("updatedBy") Long updatedBy,
                                                           @Valid @RequestBody TreeModifyRequestDto treeModifyDto) {
-        TreeDetailResponseDto responseDto = treeService.treeModify(treeId,updatedBy,treeModifyDto);
+        long userId = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
+        TreeDetailResponseDto responseDto = treeService.treeModify(treeId,userId ,treeModifyDto);
         return new BaseResponse<>(ResultType.SUCCESS, responseDto);
     }
 
 
     /** 트리 삭제 */
-    @DeleteMapping("/{treeId}/{updatedBy}")
-    public BaseResponse<Void> treeDelete(@PathVariable("treeId") String treeId,
-                                         @PathVariable("updatedBy") Long updatedBy) {
-        treeService.treeDelete(treeId,updatedBy);
+    @DeleteMapping("/{treeId}")
+    public BaseResponse<Void> treeDelete(@PathVariable("treeId") String treeId) {
+        long userId = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
+        treeService.treeDelete(treeId, userId);
         return new BaseResponse<>(ResultType.SUCCESS, null);
     }
 

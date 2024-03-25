@@ -44,14 +44,7 @@ public class Token {
         this.atExpiration = atExpiration;
         this.rtExpiration = rtExpiration;
     }
-
-
-    public Token updateValues(String accessToken, String refreshToken) {
-        this.atValue = accessToken;
-        this.rtValue = refreshToken;
-        return this;
-    }
-
+    
     public TokenResponseDto toResponseDto(){
         return new TokenResponseDto(this.atValue);
     }

@@ -2,6 +2,7 @@ package com.chukapoka.server.tree.dto;
 
 import com.chukapoka.server.common.annotation.ValidEnum;
 import com.chukapoka.server.common.enums.TreeType;
+import com.chukapoka.server.tree.entity.Tree;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -18,5 +19,14 @@ public class TreeModifyRequestDto {
     private String treeTopColor;
     private String treeItemColor;
     private String treeBottomColor;
-    
+
+    public void toEntity(Tree tree) {
+        this.title = tree.getTitle();
+        this.type = tree.getType();
+        this.treeBgColor = tree.getTreeBgColor();
+        this.groundColor = tree.getGroundColor();
+        this.treeTopColor = tree.getTreeTopColor();
+        this.treeItemColor = tree.getTreeItemColor();
+        this.treeBottomColor = tree.getTreeBottomColor();
+    }
 }
