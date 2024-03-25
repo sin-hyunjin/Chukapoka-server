@@ -59,15 +59,15 @@ public class TreeServiceImpl implements TreeService{
     @Override
     @Transactional
     public TreeDetailResponseDto treeModify(String treeId, long userId, TreeModifyRequestDto treeModifyDto) {
-        // 트리 아이디로 트리를 찾음
         Tree tree = findTreeByIdOrThrow(treeId, userId);
         // TreeModifyRequestDto를 Tree 엔티티로 변환하여 엔티티에 적용
-        treeModifyDto.toEntity(tree);
+        treeModifyDto.toEntity(tree, treeModifyDto);
         // 변경된 트리 저장
         treeRepository.save(tree);
         // 변경된 트리 상세 정보 반환
         return new TreeDetailResponseDto(tree);
     }
+
 
     /** 트리 삭제 */
     @Override
