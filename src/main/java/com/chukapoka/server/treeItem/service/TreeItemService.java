@@ -7,17 +7,17 @@ import com.chukapoka.server.treeItem.dto.TreeItemModifyRequestDto;
 public interface TreeItemService {
 
     /** 트리 아이템 생성 */
-    TreeItemDetailResponseDto createTreeItem(TreeItemCreateRequestDto treeItemCreateRequestDto);
+    TreeItemDetailResponseDto createTreeItem(TreeItemCreateRequestDto treeItemCreateRequestDto, long userId);
 
     /** 트리아이템리스트 조회(리스트용 모델) */
-    TreeItemListResponseDto treeList();
+    TreeItemListResponseDto treeList(long userId);
 
     /** 트리아이템 상세 정보 조회 (상세정보 모델) */
-    TreeItemDetailResponseDto treeDetail(String treeItemId);
+    TreeItemDetailResponseDto treeDetail(String treeItemId, long userId);
 
     /** 트리아이템 수정 */
-    TreeItemDetailResponseDto treeModify(String treeItemId, TreeItemModifyRequestDto treeItemModifyDto);
+    TreeItemDetailResponseDto treeModify(String treeItemId, TreeItemModifyRequestDto treeItemModifyDto, long userId);
 
     /** 트리아이템 삭제 */
-    void treeItemDelete(String treeItemId);
+    void treeItemDelete(String treeItemId, long userId);
 }

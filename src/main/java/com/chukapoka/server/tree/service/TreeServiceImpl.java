@@ -12,6 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -63,6 +64,7 @@ public class TreeServiceImpl implements TreeService{
         Tree tree = findTreeByIdOrThrow(treeId, userId);
         // TreeModifyRequestDto를 Tree 엔티티로 변환하여 엔티티에 적용
         modelMapper.map(treeModifyDto, tree);
+        tree.setUpdatedAt(LocalDateTime.now());
         // 변경된 트리 저장
         treeRepository.save(tree);
         // 변경된 트리 상세 정보 반환

@@ -1,5 +1,7 @@
 package com.chukapoka.server.treeItem.dto;
 
+import com.chukapoka.server.tree.entity.Tree;
+import com.chukapoka.server.treeItem.entity.TreeItem;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -17,8 +19,19 @@ public class TreeItemCreateRequestDto {
     private String content;
     @NotBlank(message = "treeItemColor is null")
     private String treeItemColor;
-    private Long updatedBy;
-    private LocalDateTime updatedAt;
+
+
+    public TreeItem toEntity(Tree tree, TreeItemCreateRequestDto treeItemCreateRequestDto, long userId) {
+        return TreeItem.builder()
+                .treeId(tree.getTreeId())
+                .title(treeItemCreateRequestDto.getTitle())
+                .content(treeItemCreateRequestDto.getContent())
+                .treeItemColor(treeItemCreateRequestDto.getTreeItemColor())
+                .updatedBy(userId)
+                .updatedAt(LocalDateTime.now())
+                .build();
+    }
+
 }
 
 

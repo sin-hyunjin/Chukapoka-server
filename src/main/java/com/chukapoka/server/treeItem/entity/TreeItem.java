@@ -3,6 +3,7 @@ package com.chukapoka.server.treeItem.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
@@ -15,6 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @DynamicUpdate // 데이터의 변경사항이 있는 것만 수정
 @Table(name = "tb_treeItem")
 public class TreeItem {

@@ -1,5 +1,6 @@
 package com.chukapoka.server.treeItem.dto;
 
+import com.chukapoka.server.treeItem.entity.TreeItem;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,4 +21,13 @@ public class TreeItemDetailResponseDto {
     private Long updatedBy;
     private LocalDateTime updatedAt;
 
+    public TreeItemDetailResponseDto(TreeItem treeItem) {
+        this.id = treeItem.getId();
+        this.treeId = treeItem.getTreeId();
+        this.title = treeItem.getTitle();
+        this.content = treeItem.getContent();
+        this.treeItemColor = treeItem.getTreeItemColor();
+        this.updatedBy = treeItem.getUpdatedBy();
+        this.updatedAt = treeItem.getUpdatedAt();
+    }
 }
