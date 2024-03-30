@@ -1,6 +1,7 @@
 package com.chukapoka.server.treeItem.entity;
 
 
+import com.chukapoka.server.treeItem.dto.TreeDetailTreeItemResponseDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,6 +11,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Entity
@@ -35,10 +37,6 @@ public class TreeItem {
     @Column(name = "content")
     private String content;
 
-    /** 트리아이템 색상 */
-    @Column(name = "treeItemColor", nullable = true)
-    private String treeItemColor;
-
     /** userId가 값임 */
     @Column(name = "updatedBy")
     private Long updatedBy;
@@ -56,7 +54,17 @@ public class TreeItem {
     }
     private static final AtomicInteger counter = new AtomicInteger(0);
     private static String TreeItemId() {
-        return "treeItem" + counter.incrementAndGet();
+        return Base64.getEncoder().encodeToString(("treeItemId" + counter.incrementAndGet()).getBytes());
+    }
+
+    public TreeDetailTreeItemResponseDto toTreeDetailTreeItemResponseDto(long userId) {
+        return new TreeDetailTreeItemResponseDto(
+                id,
+                treeId,
+                title,
+                updatedAt,
+                updatedBy == userId
+        );
     }
 
 }

@@ -17,7 +17,6 @@ public class TreeItemDetailResponseDto {
     private String treeId;
     private String title;
     private String content;
-    private String treeItemColor;
     private Long updatedBy;
     private LocalDateTime updatedAt;
 
@@ -26,7 +25,6 @@ public class TreeItemDetailResponseDto {
         this.treeId = treeItem.getTreeId();
         this.title = treeItem.getTitle();
         this.content = treeItem.getContent();
-        this.treeItemColor = treeItem.getTreeItemColor();
         this.updatedBy = treeItem.getUpdatedBy();
         this.updatedAt = treeItem.getUpdatedAt();
     }

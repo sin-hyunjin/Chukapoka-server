@@ -26,7 +26,6 @@ public class TreeItemCreateRequestDto {
                 .treeId(tree.getTreeId())
                 .title(treeItemCreateRequestDto.getTitle())
                 .content(treeItemCreateRequestDto.getContent())
-                .treeItemColor(treeItemCreateRequestDto.getTreeItemColor())
                 .updatedBy(userId)
                 .updatedAt(LocalDateTime.now())
                 .build();
