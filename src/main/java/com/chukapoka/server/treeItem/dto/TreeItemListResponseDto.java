@@ -10,5 +10,5 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TreeItemListResponseDto {
-    private List<TreeItemDetailResponseDto> treeItem;
+    private List<TreeItemDetailResponseDto> treeItemList;
 }

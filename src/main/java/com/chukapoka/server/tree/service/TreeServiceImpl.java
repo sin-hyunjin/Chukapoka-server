@@ -51,9 +51,10 @@ public class TreeServiceImpl implements TreeService{
     public TreeDetailResponseDto treeDetail(String treeId, long userId) {
         Tree tree = findTreeByIdOrThrow(treeId, userId);
         // 트리에 속한 모든 TreeItem을 가져오기
-        List<TreeItem> treeItems = treeItemRepository.findByTreeId(tree.getTreeId());
+//        List<TreeItem> treeItems = treeItemRepository.findByTreeId(tree.getTreeId());
         // 트리와 트리아이템 전체목록 반환
-        return new TreeDetailResponseDto(tree, treeItems);
+//        return new TreeDetailResponseDto(tree, treeItems);
+        return new TreeDetailResponseDto(tree);
     }
 
     /** 트리수정 */

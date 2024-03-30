@@ -10,6 +10,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Entity
@@ -29,8 +30,8 @@ public class Tree {
     private String title;
 
     /** 내트리 || 미부여 트리 */
-    @Column(name = "type")
-    private String type;
+    @Column(name = "ownerType")
+    private String ownerType;
 
     /** 트리 링크를 특정하기 위한 id*/
     @Column(name = "linkId", nullable = false, unique = true, length = 200)
@@ -41,20 +42,11 @@ public class Tree {
     private String sendId;
 
     /** 트라 관련 색상은 String -> enum type으로 상수로 바꿔야 관리가 더 편할것같음 */
-    @Column(name = "treeBgColor", nullable = true)
-    private String treeBgColor;
+    @Column(name = "treeType")
+    private String treeType;
 
-    @Column(name = "groundColor", nullable = true)
-    private String groundColor;
-
-    @Column(name = "treeTopColor", nullable = true)
-    private String treeTopColor;
-
-    @Column(name = "treeItemColor", nullable = true)
-    private String treeItemColor;
-
-    @Column(name = "treeBottomColor", nullable = true)
-    private String treeBottomColor;
+    @Column(name = "bgType")
+    private String bgType;
 
     /** userId가 값임 */
     @Column(name = "updatedBy")
@@ -76,7 +68,7 @@ public class Tree {
 
     private static final AtomicInteger counter = new AtomicInteger(0);
     private static String TreeId() {
-        return "treeId" + counter.incrementAndGet();
+        return Base64.getEncoder().encodeToString(("treeId" + counter.incrementAndGet()).getBytes());
     }
 
 }

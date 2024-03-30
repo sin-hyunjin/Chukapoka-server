@@ -26,7 +26,7 @@ public class TreeController {
 
     /**트리 생성 */
     @PostMapping
-    public BaseResponse<TreeDetailResponseDto>createTree(@Valid @RequestBody TreeCreateRequestDto treeRequestDto) {
+    public BaseResponse<TreeDetailResponseDto> createTree(@Valid @RequestBody TreeCreateRequestDto treeRequestDto) {
         long userId = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
         TreeDetailResponseDto responseDto = treeService.createTree(treeRequestDto, userId);
         return new BaseResponse<>(ResultType.SUCCESS, responseDto);

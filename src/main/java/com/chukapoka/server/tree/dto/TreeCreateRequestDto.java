@@ -1,43 +1,64 @@
 package com.chukapoka.server.tree.dto;
 
 import com.chukapoka.server.common.annotation.ValidEnum;
+import com.chukapoka.server.common.enums.BgType;
+import com.chukapoka.server.common.enums.OwnerType;
 import com.chukapoka.server.common.enums.TreeType;
 import com.chukapoka.server.tree.entity.Tree;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Base64;
 import java.util.UUID;
 
 @Data
 public class TreeCreateRequestDto {
     @NotBlank(message = "title is null")
     private String title;
+
+    @NotBlank(message = "ownerType is null")
+    @ValidEnum(enumClass = OwnerType.class, message = "OwnerType must be MINE or NOT_YET_SEND")
+    private String ownerType;
+
     @NotBlank(message = "treeType is null")
-    @ValidEnum(enumClass = TreeType.class, message = "TreeType must be MINE or NOT_YET_SEND")
-    private String type;
-    private String treeBgColor;
-    private String groundColor;
-    private String treeTopColor;
-    private String treeItemColor;
-    private String treeBottomColor;
-    // 클라이언트에서는 입력받을 필요없음 ( TreeServicelmpl.createTree 에서 처리 )
+    @ValidEnum(enumClass = TreeType.class, message = "TreeType must be TREE_TYPE_*")
+    private String treeType;
+
+    @NotBlank(message = "bgType is null")
+    @ValidEnum(enumClass = BgType.class, message = "bgType must be BG_TYPE_")
+    private String bgType;
 
     /** Create Tree Build*/
     public Tree toEntity(TreeCreateRequestDto treeRequestDto, long userId) {
         UUID linkId = UUID.randomUUID();
         UUID sendId = UUID.randomUUID();
+
+        LocalDateTime updatedAt = LocalDateTime.now();
+        String encodedLinkId = Base64.getEncoder().encodeToString(encoder().encode(linkId + "-link-" + userId + updatedAt  + updatedAt.atZone(ZoneId.systemDefault()).toEpochSecond()).getBytes());
+        String encodedSendId = "";
+        if (treeRequestDto.ownerType.equals(OwnerType.NOT_YET_SEND.getValue())) {
+            encodedSendId = Base64.getEncoder().encodeToString(encoder().encode(sendId + "-send-"+ userId + updatedAt + updatedAt.atZone(ZoneId.systemDefault()).toEpochSecond()).getBytes());
+        }
         return Tree.builder()
                 .title(treeRequestDto.title)
-                .type(treeRequestDto.type)
-                .linkId(linkId + "-link-"+ userId )
-                .sendId(sendId + "-send-"+ userId)
-                .treeBgColor(treeRequestDto.treeBgColor)
-                .groundColor(treeRequestDto.groundColor)
-                .treeTopColor(treeRequestDto.treeTopColor)
-                .treeItemColor(treeRequestDto.treeItemColor)
-                .treeBottomColor(treeRequestDto.treeBottomColor)
+                .ownerType(treeRequestDto.ownerType)
+                .linkId(encodedLinkId)
+                .sendId(encodedSendId)
+                .treeType(treeRequestDto.treeType)
+                .bgType(treeRequestDto.bgType)
                 .updatedBy(userId)
+                .updatedAt(updatedAt)
                 .build();
+    }
 
+    // linkId, sendId 암호화를 위해  BCryptPasswordEncoder 등록
+    @Bean
+    public PasswordEncoder encoder() {
+        return new BCryptPasswordEncoder();
     }
 }
