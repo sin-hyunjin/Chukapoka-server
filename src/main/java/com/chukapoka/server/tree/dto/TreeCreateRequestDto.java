@@ -3,6 +3,7 @@ package com.chukapoka.server.tree.dto;
 import com.chukapoka.server.common.annotation.ValidEnum;
 import com.chukapoka.server.common.enums.BgType;
 import com.chukapoka.server.common.enums.OwnerType;
+import com.chukapoka.server.common.enums.ShareType;
 import com.chukapoka.server.common.enums.TreeType;
 import com.chukapoka.server.tree.entity.Tree;
 import jakarta.validation.constraints.NotBlank;
@@ -25,6 +26,10 @@ public class TreeCreateRequestDto {
     @ValidEnum(enumClass = OwnerType.class, message = "OwnerType must be MINE or NOT_YET_SEND")
     private String ownerType;
 
+    @NotBlank(message = "shareType is null")
+    @ValidEnum(enumClass = ShareType.class, message = "shareType must be ONLY or TOGETHER")
+    private String shareType;
+
     @NotBlank(message = "treeType is null")
     @ValidEnum(enumClass = TreeType.class, message = "TreeType must be TREE_TYPE_*")
     private String treeType;
@@ -32,6 +37,8 @@ public class TreeCreateRequestDto {
     @NotBlank(message = "bgType is null")
     @ValidEnum(enumClass = BgType.class, message = "bgType must be BG_TYPE_")
     private String bgType;
+
+
 
     /** Create Tree Build*/
     public Tree toEntity(TreeCreateRequestDto treeRequestDto, long userId) {
@@ -47,6 +54,7 @@ public class TreeCreateRequestDto {
         return Tree.builder()
                 .title(treeRequestDto.title)
                 .ownerType(treeRequestDto.ownerType)
+                .shareType(treeRequestDto.shareType)
                 .linkId(encodedLinkId)
                 .sendId(encodedSendId)
                 .treeType(treeRequestDto.treeType)

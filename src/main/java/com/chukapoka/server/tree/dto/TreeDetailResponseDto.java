@@ -20,6 +20,7 @@ public class TreeDetailResponseDto {
     private String linkId;
     private String sendId;
     private String ownerType;
+    private String shareType;
     private String treeType;
     private String bgType;
     private LocalDateTime updatedAt;
@@ -35,6 +36,7 @@ public class TreeDetailResponseDto {
         this.linkId = tree.getLinkId();
         this.sendId = tree.getSendId();
         this.ownerType = tree.getOwnerType();
+        this.shareType = tree.getShareType();
         this.treeType = tree.getTreeType();
         this.bgType = tree.getBgType();
         this.updatedAt = tree.getUpdatedAt();

@@ -40,10 +40,7 @@ public class TreeServiceImpl implements TreeService{
     public TreeListResponseDto treeList(long userId) {
         // modelMapper로 리스트 조회후 맵핑하는방법
         List<Tree> trees = treeRepository.findAllByUpdatedBy(userId);
-        List<TreeList> treeLists = trees.stream()
-                .map(tree -> modelMapper.map(tree, TreeList.class))
-                .collect(Collectors.toList());
-        return new TreeListResponseDto(treeLists);
+        return new TreeListResponseDto(trees.stream().map(TreeDetailResponseDto::new).toList());
     }
 
     /** 트리 상세 정보 조회 (상세정보 모델) */

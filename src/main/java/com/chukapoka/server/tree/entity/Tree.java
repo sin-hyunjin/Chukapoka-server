@@ -11,6 +11,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Entity
@@ -33,12 +34,16 @@ public class Tree {
     @Column(name = "ownerType")
     private String ownerType;
 
+    /* 혼자보는 || 다같이보는 */
+    @Column(name = "shareType")
+    private String shareType;
+
     /** 트리 링크를 특정하기 위한 id*/
     @Column(name = "linkId", nullable = false, unique = true, length = 200)
     private String linkId;
 
     /** 타인에게 트리를 전달할 때 트리를 특정하기 위한 id */
-    @Column(name = "sendId", unique = true, length = 200)
+    @Column(name = "sendId", length = 200)
     private String sendId;
 
     /** 트라 관련 색상은 String -> enum type으로 상수로 바꿔야 관리가 더 편할것같음 */
@@ -61,14 +66,15 @@ public class Tree {
     public void prePersist() {
         this.updatedAt = LocalDateTime.now();
         if(this.treeId == null) {
-            this.treeId = TreeId();
+            this.treeId = TreeId(this.updatedBy, this.updatedAt);
         }
 
     }
 
     private static final AtomicInteger counter = new AtomicInteger(0);
-    private static String TreeId() {
-        return Base64.getEncoder().encodeToString(("treeId" + counter.incrementAndGet()).getBytes());
+    private static String TreeId(long updatedBy, LocalDateTime updatedAt) {
+        UUID randomUUID = UUID.randomUUID();
+        return Base64.getEncoder().encodeToString(("treeId" + updatedBy + updatedAt + randomUUID).getBytes());
     }
 
 }
