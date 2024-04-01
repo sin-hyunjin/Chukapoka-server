@@ -79,8 +79,10 @@ public class TreeItemServiceImpl implements TreeItemService{
     private TreeItemDetailResponseDto saveTreeItem(String treeId, long userId, TreeItemCreateRequestDto treeItemCreateRequestDto) {
         // 트리 객체 조회
         Tree tree = treeRepository.findById(treeId).orElseThrow(() -> new EntityNotFoundException("등록되지 않은 " + treeId + "입니다."));
+        // 트리가 존재한다면,,
+
         // 트리 아이템 생성 및 저장
-        TreeItem treeItem = treeItemCreateRequestDto.toEntity(tree , treeItemCreateRequestDto, userId);
+        TreeItem treeItem = treeItemCreateRequestDto.toEntity(treeItemCreateRequestDto, userId);
         treeItemRepository.save(treeItem);
         return new TreeItemDetailResponseDto(treeItem);
     }

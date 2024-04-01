@@ -12,6 +12,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Entity
@@ -37,6 +38,9 @@ public class TreeItem {
     @Column(name = "content")
     private String content;
 
+    @Column(name = "bgType")
+    private String bgType;
+
     /** userId가 값임 */
     @Column(name = "updatedBy")
     private Long updatedBy;
@@ -48,13 +52,15 @@ public class TreeItem {
 
     @PrePersist // JPA에서는 엔티티의 생명주기 중 하나의 이벤트에 대해 하나의 @PrePersist 메서드만을 허용
     public void prePersist() {
+        this.updatedAt = LocalDateTime.now();
         if (this.id == null) {
-            this.id = TreeItemId();
+            this.id = TreeItemId(this.updatedBy, this.updatedAt);
         }
     }
     private static final AtomicInteger counter = new AtomicInteger(0);
-    private static String TreeItemId() {
-        return Base64.getEncoder().encodeToString(("treeItemId" + counter.incrementAndGet()).getBytes());
+    private static String TreeItemId(long updatedBy, LocalDateTime updatedAt) {
+        UUID randomUUID = UUID.randomUUID();
+        return Base64.getEncoder().encodeToString(("treeItemId" + updatedBy + updatedAt + randomUUID).getBytes());
     }
 
     public TreeDetailTreeItemResponseDto toTreeDetailTreeItemResponseDto(long userId) {

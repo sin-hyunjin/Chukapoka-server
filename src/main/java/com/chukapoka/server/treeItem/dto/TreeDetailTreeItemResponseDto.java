@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class TreeDetailTreeItemResponseDto {
     /** 트리 상세정보에 포함된 트리아이템 정보(content는 제외) */
 
-    private String id;
+    private String treeItemId;
     private String treeId;
     private String title;
     private LocalDateTime updatedAt;

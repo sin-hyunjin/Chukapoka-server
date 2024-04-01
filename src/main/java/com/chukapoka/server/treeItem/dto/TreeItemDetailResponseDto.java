@@ -13,19 +13,19 @@ import java.time.LocalDateTime;
 public class TreeItemDetailResponseDto {
 
     /** 트리 아이템 상세정보 */
-    private String id;
+    private String treeItemId;  // tree item id
     private String treeId;
     private String title;
     private String content;
-    private Long updatedBy;
+    private String bgType;
     private LocalDateTime updatedAt;
 
     public TreeItemDetailResponseDto(TreeItem treeItem) {
-        this.id = treeItem.getId();
+        this.treeItemId = treeItem.getId();
         this.treeId = treeItem.getTreeId();
         this.title = treeItem.getTitle();
         this.content = treeItem.getContent();
-        this.updatedBy = treeItem.getUpdatedBy();
+        this.bgType = treeItem.getBgType();
         this.updatedAt = treeItem.getUpdatedAt();
     }
 }

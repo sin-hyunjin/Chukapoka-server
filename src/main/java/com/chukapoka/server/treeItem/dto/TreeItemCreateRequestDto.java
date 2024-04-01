@@ -1,5 +1,7 @@
 package com.chukapoka.server.treeItem.dto;
 
+import com.chukapoka.server.common.annotation.ValidEnum;
+import com.chukapoka.server.common.enums.BgType;
 import com.chukapoka.server.tree.entity.Tree;
 import com.chukapoka.server.treeItem.entity.TreeItem;
 import jakarta.validation.constraints.NotBlank;
@@ -17,15 +19,16 @@ public class TreeItemCreateRequestDto {
     private String title;
     @NotBlank(message = "content is null")
     private String content;
-    @NotBlank(message = "treeItemColor is null")
-    private String treeItemColor;
+    @ValidEnum(enumClass = BgType.class, message = "bgType must be BG_TYPE_")
+    private String bgType;
 
 
-    public TreeItem toEntity(Tree tree, TreeItemCreateRequestDto treeItemCreateRequestDto, long userId) {
+    public TreeItem toEntity(TreeItemCreateRequestDto treeItemCreateRequestDto, long userId) {
         return TreeItem.builder()
-                .treeId(tree.getTreeId())
+                .treeId(treeItemCreateRequestDto.getTreeId())
                 .title(treeItemCreateRequestDto.getTitle())
                 .content(treeItemCreateRequestDto.getContent())
+                .bgType(treeItemCreateRequestDto.getBgType())
                 .updatedBy(userId)
                 .updatedAt(LocalDateTime.now())
                 .build();
