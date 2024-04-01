@@ -53,6 +53,16 @@ public class TreeServiceImpl implements TreeService{
         return new TreeDetailResponseDto(tree, treeItems.stream().map(item -> item.toTreeDetailTreeItemResponseDto(userId)).toList());
     }
 
+    /** 트리 상세 정보 조회 (상세정보 모델) by linkId*/
+    @Override
+    public TreeDetailResponseDto treeDetailByLinkId(String linkId, long userId) {
+        Tree tree = findTreeByLinkIdOrThrow(linkId);
+        // 트리에 속한 모든 TreeItem을 가져오기
+        List<TreeItem> treeItems = treeItemRepository.findByTreeId(tree.getTreeId());
+        // 트리와 트리아이템 전체목록 반환
+        return new TreeDetailResponseDto(tree, treeItems.stream().map(item -> item.toTreeDetailTreeItemResponseDto(userId)).toList());
+    }
+
     /** 트리수정 */
     @Override
     @Transactional
@@ -82,4 +92,12 @@ public class TreeServiceImpl implements TreeService{
         return treeRepository.findByTreeIdAndUpdatedBy(treeId, userId)
                 .orElseThrow(() -> new EntityNotFoundException("등록되지 않은 " + treeId + "입니다."));
     }
+
+    /** treeId Exception 처리 메서드 by linkId */
+    private Tree findTreeByLinkIdOrThrow(String linkId) {
+        return treeRepository.findByLinkId(linkId)
+                .orElseThrow(() -> new EntityNotFoundException("등록되지 않은 " + linkId + "입니다."));
+    }
+
+
 }

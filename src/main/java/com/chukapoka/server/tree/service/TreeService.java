@@ -16,6 +16,9 @@ public interface TreeService {
     /** 트리 상세 정보 조회 (상세정보 모델) */
     TreeDetailResponseDto treeDetail(String treeId, long userId);
 
+    /** 트리 상세 정보 조회 (상세정보 모델) by linkId */
+    TreeDetailResponseDto treeDetailByLinkId(String linkId, long userId);
+
     /** 트리 수정 */
     TreeDetailResponseDto treeModify(String treeId,long userId, TreeModifyRequestDto treeModifyDto);
 

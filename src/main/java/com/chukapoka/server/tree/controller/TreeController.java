@@ -48,6 +48,14 @@ public class TreeController {
         return new BaseResponse<>(ResultType.SUCCESS, responseDto);
     }
 
+    /** 트리상세 정보 by linkId */
+    @GetMapping("/link/{linkId}")
+    private BaseResponse<TreeDetailResponseDto> treeDetailByLinkId(@PathVariable("linkId") String linkId) {
+        long userId = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
+        TreeDetailResponseDto responseDto = treeService.treeDetailByLinkId(linkId, userId);
+        return new BaseResponse<>(ResultType.SUCCESS, responseDto);
+    }
+
     /** 트리 수정 */
     @PutMapping("/{treeId}")
     public BaseResponse<TreeDetailResponseDto> treeModify(@PathVariable("treeId") String treeId,
