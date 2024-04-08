@@ -10,7 +10,9 @@ public enum BgType {
     BG_TYPE_01("BG_TYPE_01"),
     BG_TYPE_02("BG_TYPE_02"),
     BG_TYPE_03("BG_TYPE_03"),
-    BG_TYPE_04("BG_TYPE_04");
+    BG_TYPE_04("BG_TYPE_04"),
+    BG_TYPE_05("BG_TYPE_05"),
+    BG_TYPE_06("BG_TYPE_06");
 
     private final String description;
     private static final Map<String, BgType> lookup = new HashMap<>();
