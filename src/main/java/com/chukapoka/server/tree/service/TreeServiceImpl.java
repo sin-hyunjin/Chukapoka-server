@@ -74,6 +74,15 @@ public class TreeServiceImpl implements TreeService{
         return modelMapper.map(newTree, TreeDetailResponseDto.class);
     }
 
+    @Override
+    public TreeDetailResponseDto treeAccess(String sendId, long userId) {
+        Tree tree = findTreeBySendIdOrThrow(sendId);
+        // 현재 userId로 소유권 변경
+        Tree newTree = tree.changeOwner(userId);
+        treeRepository.save(newTree);
+        return modelMapper.map(newTree, TreeDetailResponseDto.class);
+    }
+
     /** 트리 삭제 */
     @Override
     @Transactional
@@ -98,6 +107,12 @@ public class TreeServiceImpl implements TreeService{
     private Tree findTreeByLinkIdOrThrow(String linkId) {
         return treeRepository.findByLinkId(linkId)
                 .orElseThrow(() -> new EntityNotFoundException("등록되지 않은 " + linkId + "입니다."));
+    }
+
+    /** treeId Exception 처리 메서드 by sendId */
+    private Tree findTreeBySendIdOrThrow(String sendId) {
+        return treeRepository.findBySendId(sendId)
+                .orElseThrow(() -> new EntityNotFoundException("등록되지 않은 " + sendId + "입니다."));
     }
 
 

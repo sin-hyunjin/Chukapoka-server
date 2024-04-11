@@ -13,5 +13,6 @@ public interface TreeRepository extends JpaRepository<Tree, String> {
     Optional<Tree> findByTreeId(String treeId);
     Optional<Tree> findByTreeIdAndUpdatedBy(String treeId, long userid);
     Optional<Tree> findByLinkId(String linkId);
+    Optional<Tree> findBySendId(String sendId);
     List<Tree> findAllByUpdatedBy(Long updatedBy);
 }

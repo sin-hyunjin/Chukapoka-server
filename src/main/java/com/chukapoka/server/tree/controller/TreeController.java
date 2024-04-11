@@ -74,6 +74,14 @@ public class TreeController {
         return new BaseResponse<>(ResultType.SUCCESS, null);
     }
 
+    /** 미전달 트리 전달에 따른 소유권 변경 */
+    @PostMapping("/access/{sendId}")
+    public BaseResponse<TreeDetailResponseDto> treeAccess(@PathVariable("sendId") String sendId) {
+        long userId = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
+        TreeDetailResponseDto responseDto = treeService.treeAccess(sendId, userId);
+        return new BaseResponse<>(ResultType.SUCCESS, responseDto);
+    }
+
 
 }
 

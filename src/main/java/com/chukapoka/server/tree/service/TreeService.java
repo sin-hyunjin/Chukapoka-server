@@ -22,6 +22,9 @@ public interface TreeService {
     /** 트리 수정 */
     TreeDetailResponseDto treeModify(String treeId,long userId, TreeModifyRequestDto treeModifyDto);
 
+    /** 트리 소유권 변경 */
+    TreeDetailResponseDto treeAccess(String sendId, long userId);
+
     /** 트리 삭제 */
     void treeDelete(String treeId,long userId);
 

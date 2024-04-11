@@ -1,5 +1,6 @@
 package com.chukapoka.server.tree.entity;
 
+import com.chukapoka.server.common.enums.OwnerType;
 import jakarta.persistence.*;
 
 import lombok.AllArgsConstructor;
@@ -75,6 +76,13 @@ public class Tree {
     private static String TreeId(long updatedBy, LocalDateTime updatedAt) {
         UUID randomUUID = UUID.randomUUID();
         return Base64.getEncoder().encodeToString(("treeId" + updatedBy + updatedAt + randomUUID).getBytes());
+    }
+
+    public Tree changeOwner(long userId) {
+        this.setOwnerType(OwnerType.MINE.getValue());
+        this.setUpdatedBy(userId);
+        this.setUpdatedAt(LocalDateTime.now());
+        return this;
     }
 
 }
