@@ -11,10 +11,7 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -46,11 +43,11 @@ public class TreeServiceImpl implements TreeService{
     /** 트리 상세 정보 조회 (상세정보 모델) */
     @Override
     public TreeDetailResponseDto treeDetail(String treeId, long userId) {
-        Tree tree = findTreeByIdOrThrow(treeId, userId);
+        Tree tree = findTreeByIdOrThrow(treeId);
         // 트리에 속한 모든 TreeItem을 가져오기
         List<TreeItem> treeItems = treeItemRepository.findByTreeId(tree.getTreeId());
         // 트리와 트리아이템 전체목록 반환
-        return new TreeDetailResponseDto(tree, treeItems.stream().map(item -> item.toTreeDetailTreeItemResponseDto(userId)).toList());
+        return new TreeDetailResponseDto(tree, treeItems.stream().map(item -> item.toTreeDetailTreeItemResponseDto(userId)).toList(), userId);
     }
 
     /** 트리 상세 정보 조회 (상세정보 모델) by linkId*/
@@ -68,27 +65,31 @@ public class TreeServiceImpl implements TreeService{
     @Transactional
     public TreeDetailResponseDto treeModify(String treeId, long userId, TreeModifyRequestDto treeModifyDto) {
         // 트리 아이디로 트리를 찾음
-        Tree tree = findTreeByIdOrThrow(treeId, userId);
-        // TreeModifyRequestDto를 Tree 엔티티로 변환하여 엔티티에 적용
-        modelMapper.map(treeModifyDto, tree);
-        tree.setUpdatedAt(LocalDateTime.now());
+        Tree tree = findByTreeIdAndUpdatedByOrThrow(treeId, userId);
+        // 새로운 트리 객체
+        Tree newTree = treeModifyDto.toEntity(tree);
         // 변경된 트리 저장
-        treeRepository.save(tree);
+        treeRepository.save(newTree);
         // 변경된 트리 상세 정보 반환
-        return modelMapper.map(tree, TreeDetailResponseDto.class);
+        return modelMapper.map(newTree, TreeDetailResponseDto.class);
     }
 
     /** 트리 삭제 */
     @Override
     @Transactional
     public void treeDelete(String treeId, long userId) {
-        Tree tree = findTreeByIdOrThrow(treeId, userId);
+        Tree tree = findByTreeIdAndUpdatedByOrThrow(treeId, userId);
         treeRepository.delete(tree);
     }
 
 
     /** treeId Exception 처리 메서드 */
-    private Tree findTreeByIdOrThrow(String treeId, long userId) {
+    private Tree findTreeByIdOrThrow(String treeId) {
+        return treeRepository.findByTreeId(treeId)
+                .orElseThrow(() -> new EntityNotFoundException("등록되지 않은 " + treeId + "입니다."));
+    }
+
+    private Tree findByTreeIdAndUpdatedByOrThrow(String treeId, long userId) {
         return treeRepository.findByTreeIdAndUpdatedBy(treeId, userId)
                 .orElseThrow(() -> new EntityNotFoundException("등록되지 않은 " + treeId + "입니다."));
     }

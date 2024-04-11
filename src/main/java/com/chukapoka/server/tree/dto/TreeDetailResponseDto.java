@@ -27,7 +27,7 @@ public class TreeDetailResponseDto {
 
 //    /** treeItem 목록 */ TODO: 추후 추가 수정
     private List<TreeDetailTreeItemResponseDto> treeItemList;
-
+    private boolean myTree = false;
 
     /** 트리 생성, 수정 constructor */
     public TreeDetailResponseDto(Tree tree) {
@@ -49,9 +49,25 @@ public class TreeDetailResponseDto {
         this.linkId = tree.getLinkId();
         this.sendId = tree.getSendId();
         this.ownerType = tree.getOwnerType();
+        this.shareType = tree.getShareType();
         this.treeType = tree.getTreeType();
         this.bgType = tree.getBgType();
         this.updatedAt = tree.getUpdatedAt();
         this.treeItemList = treeItemList;
+
+    }
+
+    public TreeDetailResponseDto(Tree tree,  List<TreeDetailTreeItemResponseDto> treeItemList, long userId) {
+        this.treeId = tree.getTreeId();
+        this.title = tree.getTitle();
+        this.linkId = tree.getLinkId();
+        this.sendId = tree.getSendId();
+        this.ownerType = tree.getOwnerType();
+        this.shareType = tree.getShareType();
+        this.treeType = tree.getTreeType();
+        this.bgType = tree.getBgType();
+        this.updatedAt = tree.getUpdatedAt();
+        this.treeItemList = treeItemList;
+        this.myTree = tree.getUpdatedBy() == userId;
     }
 }

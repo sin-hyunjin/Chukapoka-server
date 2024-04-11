@@ -10,7 +10,8 @@ import java.util.Optional;
 
 @Repository
 public interface TreeRepository extends JpaRepository<Tree, String> {
-    Optional<Tree> findByTreeIdAndUpdatedBy(String treeId, long userId);
+    Optional<Tree> findByTreeId(String treeId);
+    Optional<Tree> findByTreeIdAndUpdatedBy(String treeId, long userid);
     Optional<Tree> findByLinkId(String linkId);
     List<Tree> findAllByUpdatedBy(Long updatedBy);
 }

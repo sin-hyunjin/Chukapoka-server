@@ -16,5 +16,5 @@ public class TreeDetailTreeItemResponseDto {
     private String treeId;
     private String title;
     private LocalDateTime updatedAt;
-    private boolean isMyTreeItem;
+    private boolean myTreeItem;
 }
