@@ -18,43 +18,22 @@ repositories {
 }
 
 dependencies {
-	// Spring Boot 웹 애플리케이션을 위한 의존성
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'javax.servlet:javax.servlet-api:4.0.1'
-
-	// 개발 중에만 필요한 의존성 (예: 빌드 재시작 등)
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-
-	// 테스트를 위한 의존성
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-
-	// Lombok 라이브러리를 사용하기 위한 의존성
 	implementation 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
-
-	// Spring Boot Starter Validation
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
-
-	// 데이터베이스 드라이버 (H2 사용 중)
 	runtimeOnly 'com.h2database:h2'
-
-	// Spring Security
 	implementation 'org.springframework.boot:spring-boot-starter-security'
-
-	// JWT
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
-
-	// Email 인증
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.2'
-
-	// Spring Boot Actuator
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-
-	// ModelMapper
 	implementation 'org.modelmapper:modelmapper:2.4.4'
 }
 
@@ -62,12 +41,6 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-// 설정된 Java 버전에 맞게 Gradle 빌드
 tasks.withType(org.springframework.boot.gradle.tasks.bundling.BootJar) {
 	archiveFileName.set('server-0.0.1-SNAPSHOT.jar')
-}
-
-// WAR 파일 이름 설정 (필요한 경우)
-tasks.withType(org.springframework.boot.gradle.tasks.bundling.BootWar) {
-	archiveFileName.set('server-0.0.1-SNAPSHOT.war')
 }
