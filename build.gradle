@@ -1,5 +1,6 @@
 plugins {
 	id 'java'
+	id 'war'
 	id 'org.springframework.boot' version '3.2.1'
 	id 'io.spring.dependency-management' version '1.1.4'
 }
@@ -62,4 +63,8 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+tasks.withType(org.springframework.boot.gradle.tasks.bundling.BootJar) {
+	archiveFileName.set('server-0.0.1-SNAPSHOT.jar')
 }
