@@ -1,5 +1,5 @@
 server:
-  port: ${PORT:8080}
+  port: ${PORT:80}
   shutdown: graceful
   # servlet:
   #   context-path: /
@@ -50,6 +50,5 @@ logging:
         type.descriptor.sql: trace
       springframework: debug
         # web: debug
-# JWT Secret ??
 jwt:
-  secret: ${AUTH_JWT_SECRET}
+  secret: ${AUTH_JWT_SECRET:defaultSecret}
