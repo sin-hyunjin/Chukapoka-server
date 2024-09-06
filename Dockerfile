@@ -9,7 +9,7 @@ CMD ["./gradlew", "clean", "build"]
 
 VOLUME /tmp
 
-ARG JAR_FILE=build/libs/server-0.0.1-SNAPSHOT.jar
+ARG JAR_FILE=build/libs/*.jar
 # or Maven
 # ARG JAR_FILE_PATH=target/*.jar
 
