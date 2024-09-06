@@ -1,5 +1,5 @@
 server:
-  port: ${PORT:3000}
+  port: ${PORT:80}
   shutdown: graceful
   # servlet:
   #   context-path: /
@@ -15,7 +15,7 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.PostgresSQLDialect
     open-in-view: true
     hibernate:
       ddl-auto: update
