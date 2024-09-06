@@ -11,7 +11,7 @@ server:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: 'jdbc:postgresql://postgres-db:${DB_PORT}/${DB_NAME}'
+    url: 'jdbc:postgresql://svc.sel4.cloudtype.app:${DB_PORT}/${DB_NAME}'
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
   jpa:
