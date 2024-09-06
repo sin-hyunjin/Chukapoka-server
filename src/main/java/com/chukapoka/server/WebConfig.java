@@ -12,14 +12,12 @@ public class WebConfig implements WebMvcConfigurer {
     @Autowired
     private Environment _env;
 
+    @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
-                .allowedOrigins("http://localhost:8080"
-                , _env.getProperty("DOMAIN_URL_HTTP")
-                , _env.getProperty("DOMAIN_URL_HTTPS")
-                )
-                .allowedMethods("GET"
-                , "POST", "PUT", "DELETE", "OPTIONS");
+                .allowedOrigins("http://localhost:8080", "https://chkapoka-client.vercel.app",
+                        _env.getProperty("DOMAIN_URL_HTTP"),
+                        _env.getProperty("DOMAIN_URL_HTTPS"))
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
     }
 }
-
